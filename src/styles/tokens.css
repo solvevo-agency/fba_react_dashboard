@@ -1,0 +1,26 @@
+:root {
+  /* Layout Sizing */
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 72px;
+  --navbar-height: 64px;
+  --radius: 0.625rem;
+
+  /* Responsive Section Padding */
+  --section-px: 1rem;       /* 16px on mobile */
+  --section-py: 1rem;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --section-px: 1.5rem;   /* 24px on tablet */
+    --section-py: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --section-px: 2rem;     /* 32px on desktop */
+    --section-py: 2rem;
+  }
+}
+

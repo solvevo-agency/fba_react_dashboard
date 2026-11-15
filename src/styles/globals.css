@@ -1,0 +1,149 @@
+@import './fonts.css';
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Brand Primary (#0a9fe0 matching FBA Frontend) */
+    --primary: 198 91% 46%;
+    --primary-hover: 198 92% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Brand Secondary (#f59e0b / #ffa628 matching FBA Gold) */
+    --secondary: 38 92% 50%;
+    --secondary-hover: 38 92% 44%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent */
+    --accent: 198 91% 95%;
+    --accent-foreground: 198 91% 35%;
+
+    /* Destructive */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders & Inputs */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 198 91% 46%;
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-muted: 210 40% 96.1%;
+  }
+
+  .dark {
+    /* Base */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    /* Card */
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
+
+    /* Popover */
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Brand Primary */
+    --primary: 198 91% 46%;
+    --primary-hover: 198 92% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Brand Secondary */
+    --secondary: 38 92% 50%;
+    --secondary-hover: 38 92% 56%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted */
+    --muted: 217 33% 20%;
+    --muted-foreground: 215 20% 65%;
+
+    /* Accent */
+    --accent: 198 91% 20%;
+    --accent-foreground: 198 91% 85%;
+
+    /* Destructive */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders & Inputs */
+    --border: 217 33% 22%;
+    --input: 217 33% 22%;
+    --ring: 198 91% 46%;
+
+    /* Sidebar */
+    --sidebar-background: 222 47% 13%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 22%;
+    --sidebar-muted: 217 33% 18%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-primary);
+  }
+}
+
+@layer utilities {
+  /* Consistent Responsive Page Padding */
+  .p-page {
+    padding-left: var(--section-px);
+    padding-right: var(--section-px);
+    padding-top: var(--section-py);
+    padding-bottom: var(--section-py);
+  }
+
+  .px-page {
+    padding-left: var(--section-px);
+    padding-right: var(--section-px);
+  }
+
+  .py-page {
+    padding-top: var(--section-py);
+    padding-bottom: var(--section-py);
+  }
+
+  /* Custom Clean Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 9999px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}
+
