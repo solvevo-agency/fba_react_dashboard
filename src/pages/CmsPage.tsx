@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Globe,
   Save,
@@ -17,7 +17,6 @@ import {
   Layers,
   Award,
   Video,
-  CheckCircle2,
   MessageSquare,
   Compass,
   GraduationCap,
