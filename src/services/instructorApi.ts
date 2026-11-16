@@ -8,6 +8,7 @@ export interface Instructor {
   avatar: string;
   bio: string;
   instructor_type: 'lead' | 'regular';
+  certificate_id?: string;
   status: number;
   courses_count: number;
   lessons_count?: number;
@@ -29,6 +30,7 @@ export interface InstructorPayload {
   bio?: string;
   avatar?: string;
   instructor_type: 'lead' | 'regular';
+  certificate_id?: string;
   status?: number;
 }
 

@@ -6,7 +6,6 @@ import {
   Eye,
   Trash2,
   Save,
-  QrCode,
   CheckCircle2,
   AlertTriangle,
   RotateCcw,
@@ -18,7 +17,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -66,20 +64,13 @@ export default function CertificatesPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'valid' | 'revoked'>('all');
   const [previewCert, setPreviewCert] = useState<CertificateItem | null>(null);
 
-  // Template Settings state loaded from backend certificate_metas
+  // Template Settings state: exactly 5 metadata fields
   const [templateSettings, setTemplateSettings] = useState<CertificateMetadata>({
-    id: 0,
-    header_top: '',
-    header_middle: '',
-    header_bottom: '',
-    agency_name: '',
-    provider_id: '',
-    trainer_name: '',
-    trainer_certification: '',
+    organization_name: '',
     assist_trainer_name: '',
+    assist_trainer_cert_id: '',
     trainer_signature: '',
     watermark: '',
-    footer: '',
   });
 
   // Fetch certificate metadata, metrics, and certificates from backend
@@ -102,7 +93,14 @@ export default function CertificatesPage() {
       ]);
 
       if (metaRes) {
-        setTemplateSettings(metaRes);
+        setTemplateSettings({
+          id: metaRes.id,
+          organization_name: metaRes.organization_name || '',
+          assist_trainer_name: metaRes.assist_trainer_name || '',
+          assist_trainer_cert_id: metaRes.assist_trainer_cert_id || '',
+          trainer_signature: metaRes.trainer_signature || '',
+          watermark: metaRes.watermark || '',
+        });
       }
 
       if (metricsRes) {
@@ -399,10 +397,10 @@ export default function CertificatesPage() {
 
                         <TableCell className="text-muted-foreground whitespace-nowrap text-xs">
                           <div className="font-medium text-foreground">
-                            {cert.trainer_name || templateSettings.trainer_name || 'N/A'}
+                            {cert.trainer_name || 'N/A'}
                           </div>
                           <div className="text-[10px] text-muted-foreground font-mono">
-                            {cert.trainer_certification || templateSettings.trainer_certification || ''}
+                            {cert.trainer_certification || ''}
                           </div>
                         </TableCell>
 
@@ -475,173 +473,78 @@ export default function CertificatesPage() {
           </Card>
         </TabsContent>
 
-        {/* Tab 2: Template Settings (Metadata) */}
+        {/* Tab 2: Template Settings (Metadata - 5 Fields Only) */}
         <TabsContent value="settings" className="space-y-5">
           <Card className="border shadow-xs">
             <CardHeader className="pb-3">
               <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
-                BACB Certificate Template Configuration (Metadata)
+                Certificate Template Setup & Metadata
               </CardTitle>
               <CardDescription className="text-xs">
-                Configure three-tier certificate headers, legal institute credentials, trainer credentials, digital signatures, and watermark seal
+                Configure official organization name, assistant trainer name & certificate ID, responsible trainer signature, and certificate watermark seal
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Section 1: Certificate Headers */}
-              <div className="space-y-3">
-                <div className="border-b pb-1.5">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    1. Three-Tier Certificate Headers
-                  </h3>
+              {/* Text Information Fields (3 Fields) */}
+              <div className="space-y-4">
+                {/* Field 1: Organization Name */}
+                <div className="space-y-1.5">
+                  <Label htmlFor="meta_org_name" className="text-xs font-semibold">
+                    Organization Name (if applicable)
+                  </Label>
+                  <Input
+                    id="meta_org_name"
+                    placeholder="e.g. Futures Behavior Analysis"
+                    value={templateSettings.organization_name || ''}
+                    onChange={(e) =>
+                      setTemplateSettings({ ...templateSettings, organization_name: e.target.value })
+                    }
+                    className="h-9 text-xs sm:text-sm placeholder:text-xs"
+                  />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="header_top" className="text-xs font-semibold">
-                      Header: Top (Institution Banner)
-                    </Label>
-                    <Input
-                      id="header_top"
-                      placeholder="e.g. Future Behavior Analysis (FBA) Educational Institute"
-                      value={templateSettings.header_top || ''}
-                      onChange={(e) =>
-                        setTemplateSettings({ ...templateSettings, header_top: e.target.value })
-                      }
-                      className="h-9 text-xs sm:text-sm placeholder:text-xs"
-                    />
-                  </div>
 
+                {/* Fields 2 & 3: Assistant Trainer Name & Certificate ID */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="header_middle" className="text-xs font-semibold">
-                      Header: Middle (Program Title)
+                    <Label htmlFor="meta_assist_trainer_name" className="text-xs font-semibold">
+                      Assistant Trainer Name
                     </Label>
                     <Input
-                      id="header_middle"
-                      placeholder="e.g. Registered Behavior Technician 40-Hour Training Program"
-                      value={templateSettings.header_middle || ''}
-                      onChange={(e) =>
-                        setTemplateSettings({ ...templateSettings, header_middle: e.target.value })
-                      }
-                      className="h-9 text-xs sm:text-sm placeholder:text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="header_bottom" className="text-xs font-semibold">
-                      Header: Bottom (Award Heading)
-                    </Label>
-                    <Input
-                      id="header_bottom"
-                      placeholder="e.g. Certificate of Professional Competency & Task List 2.0 Completion"
-                      value={templateSettings.header_bottom || ''}
-                      onChange={(e) =>
-                        setTemplateSettings({ ...templateSettings, header_bottom: e.target.value })
-                      }
-                      className="h-9 text-xs sm:text-sm placeholder:text-xs"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Section 2: Institution & Trainer Credentials */}
-              <div className="space-y-3">
-                <div className="border-b pb-1.5">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    2. Institutional & Trainer Credentials
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="agency_name" className="text-xs font-semibold">
-                      Accredited Agency / Legal Institute Name
-                    </Label>
-                    <Input
-                      id="agency_name"
-                      placeholder="e.g. Future Behavior Analysis (FBA) Educational Institute"
-                      value={templateSettings.agency_name || ''}
-                      onChange={(e) =>
-                        setTemplateSettings({ ...templateSettings, agency_name: e.target.value })
-                      }
-                      className="h-9 text-xs sm:text-sm placeholder:text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="provider_id" className="text-xs font-semibold">
-                      BACB ACE Provider Identification #
-                    </Label>
-                    <Input
-                      id="provider_id"
-                      placeholder="e.g. BACB ACE Provider #OP-24-1189"
-                      value={templateSettings.provider_id || ''}
-                      onChange={(e) =>
-                        setTemplateSettings({ ...templateSettings, provider_id: e.target.value })
-                      }
-                      className="h-9 text-xs sm:text-sm placeholder:text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="trainer_name" className="text-xs font-semibold">
-                      Lead Supervising Instructor Name
-                    </Label>
-                    <Input
-                      id="trainer_name"
-                      placeholder="e.g. Dr. Jennifer Adams, BCBA-D"
-                      value={templateSettings.trainer_name || ''}
-                      onChange={(e) =>
-                        setTemplateSettings({ ...templateSettings, trainer_name: e.target.value })
-                      }
-                      className="h-9 text-xs sm:text-sm placeholder:text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="trainer_cert" className="text-xs font-semibold">
-                      Lead Trainer Certification Number
-                    </Label>
-                    <Input
-                      id="trainer_cert"
-                      placeholder="e.g. BCBA-D #1-12-11894"
-                      value={templateSettings.trainer_certification || ''}
-                      onChange={(e) =>
-                        setTemplateSettings({
-                          ...templateSettings,
-                          trainer_certification: e.target.value,
-                        })
-                      }
-                      className="h-9 text-xs sm:text-sm placeholder:text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <Label htmlFor="assist_trainer_name" className="text-xs font-semibold">
-                      Assistant Trainer / Co-Instructor Name (Optional)
-                    </Label>
-                    <Input
-                      id="assist_trainer_name"
-                      placeholder="e.g. Marcus Vance, MS, BCBA"
+                      id="meta_assist_trainer_name"
+                      placeholder="e.g. Marcus Vance, MS"
                       value={templateSettings.assist_trainer_name || ''}
                       onChange={(e) =>
-                        setTemplateSettings({
-                          ...templateSettings,
-                          assist_trainer_name: e.target.value,
-                        })
+                        setTemplateSettings({ ...templateSettings, assist_trainer_name: e.target.value })
+                      }
+                      className="h-9 text-xs sm:text-sm placeholder:text-xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="meta_assist_trainer_cert_id" className="text-xs font-semibold">
+                      Assistant Trainer Certificate ID
+                    </Label>
+                    <Input
+                      id="meta_assist_trainer_cert_id"
+                      placeholder="e.g. BCBA #1-15-20194"
+                      value={templateSettings.assist_trainer_cert_id || ''}
+                      onChange={(e) =>
+                        setTemplateSettings({ ...templateSettings, assist_trainer_cert_id: e.target.value })
                       }
                       className="h-9 text-xs sm:text-sm placeholder:text-xs"
                     />
                   </div>
                 </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Responsible trainer name and certification # are auto-populated from each course&apos;s lead instructor.
+                </p>
               </div>
 
-              {/* Section 3: Signature & Watermark Uploads */}
-              <div className="space-y-3">
-                <div className="border-b pb-1.5">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    3. Digital Signature & Watermark Seal
-                  </h3>
-                </div>
+              {/* Upload Fields (2 Fields: Signature and Watermark) */}
+              <div className="border-t pt-4 space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Field 4: Responsible Trainer Signature */}
                   <div className="space-y-2">
                     <ImageUploadDropzone
                       value={templateSettings.trainer_signature || ''}
@@ -649,11 +552,12 @@ export default function CertificatesPage() {
                         setTemplateSettings({ ...templateSettings, trainer_signature: url })
                       }
                       onUploadFile={handleUploadAssetFile}
-                      aspectRatio="square"
-                      label="Supervising Trainer Digital Signature"
+                      aspectRatio="wide"
+                      label="Upload Trainer Signature"
                     />
                   </div>
 
+                  {/* Field 5: Certificate Watermark */}
                   <div className="space-y-2">
                     <ImageUploadDropzone
                       value={templateSettings.watermark || ''}
@@ -661,63 +565,14 @@ export default function CertificatesPage() {
                         setTemplateSettings({ ...templateSettings, watermark: url })
                       }
                       onUploadFile={handleUploadAssetFile}
-                      aspectRatio="square"
-                      label="Official Institutional Seal / Watermark"
+                      aspectRatio="wide"
+                      label="Upload Watermark Seal"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Section 4: Footer Accreditation Legal Notice */}
-              <div className="space-y-3">
-                <div className="border-b pb-1.5">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    4. BACB Compliance Legal Footer
-                  </h3>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="cert_footer" className="text-xs font-semibold">
-                    Accreditation & Curriculum Statement
-                  </Label>
-                  <Textarea
-                    id="cert_footer"
-                    rows={3}
-                    placeholder="Enter compliance and task list disclaimer text..."
-                    value={templateSettings.footer || ''}
-                    onChange={(e) =>
-                      setTemplateSettings({ ...templateSettings, footer: e.target.value })
-                    }
-                    className="text-xs placeholder:text-xs resize-none"
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    Printed at the bottom of all generated certificates in accordance with BACB requirements.
-                  </p>
-                </div>
-              </div>
-
-              {/* Section 5: Automated Public QR Code Registry Badge */}
-              <div className="p-4 border rounded-xl bg-muted/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-primary/10 text-primary shrink-0">
-                    <QrCode className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-foreground">
-                      Automated Public Verification QR Code
-                    </h4>
-                    <p className="text-[11px] text-muted-foreground">
-                      Each generated certificate embeds an encrypted QR code linking to:
-                      <code className="ml-1 text-[10px] bg-muted px-1.5 py-0.5 rounded font-mono">
-                        /verify-certificate/:cert_uid
-                      </code>
-                    </p>
-                  </div>
-                </div>
-                <Badge variant="outline" className="text-xs font-mono bg-background text-emerald-600 border-emerald-500/30">
-                  Registry Engine Active
-                </Badge>
-              </div>
-
+              {/* Action Bar */}
               <div className="pt-2 flex justify-end">
                 <Button
                   onClick={handleSaveTemplate}
@@ -729,7 +584,7 @@ export default function CertificatesPage() {
                   ) : (
                     <Save className="h-4 w-4" />
                   )}
-                  Save Template Settings
+                  Save Metadata Settings
                 </Button>
               </div>
             </CardContent>
@@ -737,141 +592,238 @@ export default function CertificatesPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Certificate Verification Dossier Dialog (Preview Modal) */}
+      {/* Official Certificate Preview Modal (Exact Client Design) */}
       <Dialog open={previewCert !== null} onOpenChange={() => setPreviewCert(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg flex items-center justify-between pr-6">
-              <span>Certificate Verification Dossier</span>
-              <Badge
-                className={
-                  previewCert?.status === 'valid'
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs'
-                    : 'bg-destructive/10 text-destructive border border-destructive/20 text-xs'
-                }
-              >
-                {previewCert?.status === 'valid' ? 'VERIFIED & ACTIVE' : 'REVOKED'}
-              </Badge>
-            </DialogTitle>
-            <DialogDescription className="text-xs">
-              40-Hour BACB compliance certificate printable preview with embedded credentials
-            </DialogDescription>
+        <DialogContent className="max-w-4xl w-[96vw] max-h-[95vh] overflow-y-auto p-4 sm:p-6">
+          <DialogHeader className="pb-3 border-b flex flex-row items-center justify-between">
+            <div>
+              <DialogTitle className="text-base sm:text-lg flex items-center gap-2">
+                <Award className="h-5 w-5 text-primary" />
+                Certificate Preview & Verification Record
+              </DialogTitle>
+              <DialogDescription className="text-xs">
+                Official BACB 40-Hour Training Certificate issued for {previewCert?.applicant_name}
+              </DialogDescription>
+            </div>
+            <Badge
+              className={
+                previewCert?.status === 'valid'
+                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs'
+                  : 'bg-destructive/10 text-destructive border border-destructive/20 text-xs'
+              }
+            >
+              {previewCert?.status === 'valid' ? 'VERIFIED & ACTIVE' : 'REVOKED'}
+            </Badge>
           </DialogHeader>
 
           {previewCert && (
-            <div className="relative border-4 border-double border-primary/30 p-6 sm:p-8 rounded-xl bg-gradient-to-b from-background via-muted/10 to-muted/30 text-center space-y-5 overflow-hidden">
-              {/* Watermark Background Crest if present */}
-              {(previewCert.watermark || templateSettings.watermark) && (
-                <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
-                  <img
-                    src={previewCert.watermark || templateSettings.watermark || ''}
-                    alt="Watermark"
-                    className="w-64 h-64 object-contain"
-                  />
-                </div>
-              )}
-
-              {/* Three-Tier Headers */}
-              <div className="space-y-1 relative z-10">
-                {templateSettings.provider_id && (
-                  <Badge variant="outline" className="font-mono text-[10px] tracking-widest uppercase">
-                    {templateSettings.provider_id}
-                  </Badge>
-                )}
-                <h3 className="text-base sm:text-lg font-bold tracking-tight text-foreground uppercase">
-                  {previewCert.header_top || templateSettings.header_top || ''}
-                </h3>
-                <p className="text-xs font-semibold text-primary">
-                  {previewCert.header_middle || templateSettings.header_middle || ''}
-                </p>
-                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">
-                  {previewCert.header_bottom || templateSettings.header_bottom || ''}
-                </p>
-              </div>
-
-              <div className="pt-1 relative z-10">
-                <p className="text-xs text-muted-foreground italic">This is proudly awarded to</p>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight my-1.5 underline decoration-primary decoration-2 underline-offset-4">
-                  {previewCert.applicant_name}
-                </h2>
-                <p className="text-xs font-mono text-muted-foreground">
-                  BACB Trainee ID: <span className="font-bold text-foreground">{previewCert.applicant_bacb_id || 'N/A'}</span>
-                </p>
-              </div>
-
-              <div className="max-w-md mx-auto space-y-1 relative z-10">
-                <p className="text-xs text-muted-foreground">
-                  for successfully completing the required{' '}
-                  <span className="font-bold text-foreground">
-                    {previewCert.training_time || 40.0} instructional hours
-                  </span>{' '}
-                  and passing competency evaluations for:
-                </p>
-                <p className="font-bold text-sm text-primary pt-0.5">
-                  {previewCert.course_title}
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  Training Conducted:{' '}
-                  {previewCert.training_start && previewCert.training_end
-                    ? `${previewCert.training_start} to ${previewCert.training_end}`
-                    : previewCert.issue_date}
-                </p>
-              </div>
-
-              {/* Signatures & Seal Section */}
-              <div className="pt-4 grid grid-cols-2 gap-4 items-end border-t relative z-10">
-                <div className="text-center space-y-1">
-                  {(previewCert.trainer_signature || templateSettings.trainer_signature) && (
-                    <div className="h-12 flex items-center justify-center">
+            <div className="py-2">
+              {/* Outer certificate frame with rich gradient border matching image */}
+              <div
+                className="w-full rounded-lg p-4 sm:p-6 shadow-xl"
+                style={{
+                  background: 'linear-gradient(135deg, #741b07 0%, #a73215 50%, #581607 100%)',
+                }}
+              >
+                {/* Inner white certificate sheet with double border */}
+                <div className="relative bg-white text-zinc-900 border-4 border-double border-zinc-900 p-6 sm:p-10 rounded-sm overflow-hidden min-h-[460px] flex flex-col justify-between select-none">
+                  {/* Watermark in center background */}
+                  {previewCert.watermark || templateSettings.watermark ? (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                       <img
-                        src={previewCert.trainer_signature || templateSettings.trainer_signature || ''}
-                        alt="Trainer Signature"
-                        className="max-h-12 object-contain"
+                        src={previewCert.watermark || templateSettings.watermark || ''}
+                        alt="Watermark"
+                        className="max-h-64 max-w-[280px] object-contain opacity-10"
                       />
                     </div>
+                  ) : (
+                    <div
+                      className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 text-7xl sm:text-9xl font-black text-zinc-400/25 tracking-widest uppercase transform -rotate-12 select-none"
+                      style={{ fontFamily: 'Arial, sans-serif' }}
+                    >
+                      EXAMPLE
+                    </div>
                   )}
-                  <div className="border-t border-muted-foreground/30 pt-1">
-                    <p className="text-xs font-bold text-foreground">
-                      {previewCert.trainer_name || templateSettings.trainer_name || 'Supervising Trainer'}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground font-mono">
-                      {previewCert.trainer_certification || templateSettings.trainer_certification || ''}
-                    </p>
-                    <p className="text-[9px] text-muted-foreground">Lead Supervising BCBA</p>
-                  </div>
-                </div>
 
-                <div className="text-center space-y-1 flex flex-col items-center">
-                  <div className="p-1 rounded bg-background border shadow-xs inline-block">
-                    <QrCode className="h-10 w-10 text-primary" />
-                  </div>
-                  <div className="pt-1">
-                    <p className="text-[10px] font-mono font-bold text-foreground">
-                      UID: {previewCert.cert_uid}
-                    </p>
-                    <p className="text-[9px] text-muted-foreground">Scan to verify accreditation</p>
+                  <div className="relative z-10 space-y-6">
+                    {/* Header: Course Title Certificate */}
+                    <div className="text-center pb-2">
+                      <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-zinc-950 font-serif">
+                        {previewCert.course_title.toLowerCase().includes('certificate')
+                          ? previewCert.course_title
+                          : `${previewCert.course_title} Certificate`}
+                      </h1>
+                    </div>
+
+                    {/* Section 1: Applicant Information */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                      <div>
+                        <div className="border-b-[1.5px] border-zinc-900 min-h-[28px] pb-1 flex items-end px-1">
+                          <span className="text-sm sm:text-base font-bold text-zinc-950">
+                            {previewCert.applicant_name}
+                          </span>
+                        </div>
+                        <p className="text-[11px] font-semibold text-zinc-700 mt-1 flex items-center gap-1">
+                          Name of RBT Applicant
+                          <span className="inline-flex items-center justify-center h-3 w-3 rounded-full border border-zinc-500 text-[9px] text-zinc-600 font-bold leading-none">
+                            i
+                          </span>
+                        </p>
+                      </div>
+
+                      <div>
+                        <div className="border-b-[1.5px] border-zinc-900 min-h-[28px] pb-1 flex items-end px-1 font-mono">
+                          <span className="text-sm sm:text-base font-bold text-zinc-950">
+                            {previewCert.applicant_bacb_id || 'N/A'}
+                          </span>
+                        </div>
+                        <p className="text-[11px] font-semibold text-zinc-700 mt-1 flex items-center gap-1">
+                          RBT Applicant BACB ID:
+                          <span className="inline-flex items-center justify-center h-3 w-3 rounded-full border border-zinc-500 text-[9px] text-zinc-600 font-bold leading-none">
+                            i
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Section 2: Training Information */}
+                    <div className="pt-2">
+                      <h2 className="text-center text-sm sm:text-base font-bold text-zinc-950 mb-3 font-serif">
+                        Training Information
+                      </h2>
+                      <div className="grid grid-cols-3 gap-4 text-center sm:text-left">
+                        <div>
+                          <div className="border-b-[1.5px] border-zinc-900 min-h-[28px] pb-1 flex items-end justify-center sm:justify-start px-1 font-mono text-xs sm:text-sm font-semibold text-zinc-900">
+                            {previewCert.training_start || 'N/A'}
+                          </div>
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-zinc-700 mt-1">
+                            Training Start Date:
+                          </p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="border-b-[1.5px] border-zinc-900 min-h-[28px] pb-1 flex items-end justify-center px-1 font-mono text-xs sm:text-sm font-semibold text-zinc-900">
+                            {previewCert.training_time_display || '40:00'}
+                          </div>
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-zinc-700 mt-1 flex items-center justify-center gap-1">
+                            Time to Complete:
+                            <span className="inline-flex items-center justify-center h-3 w-3 rounded-full border border-zinc-500 text-[9px] text-zinc-600 font-bold leading-none">
+                              i
+                            </span>
+                          </p>
+                        </div>
+
+                        <div>
+                          <div className="border-b-[1.5px] border-zinc-900 min-h-[28px] pb-1 flex items-end justify-center sm:justify-start px-1 font-mono text-xs sm:text-sm font-semibold text-zinc-900">
+                            {previewCert.training_end || 'N/A'}
+                          </div>
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-zinc-700 mt-1">
+                            Training End Date:
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section 3: Trainer Information */}
+                    <div className="pt-2">
+                      <h2 className="text-center text-sm sm:text-base font-bold text-zinc-950 mb-3 font-serif">
+                        Trainer Information
+                      </h2>
+
+                      {/* Row 1: Responsible Trainer */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <div className="border-b-[1.5px] border-zinc-900 min-h-[30px] pb-1 flex items-end px-1 text-xs sm:text-sm font-semibold text-zinc-950">
+                            {previewCert.trainer_name || 'Dr. Jennifer Adams, BCBA-D'}
+                          </div>
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-zinc-700 mt-1">
+                            Responsible Trainer Name:
+                          </p>
+                        </div>
+
+                        <div>
+                          <div className="border-b-[1.5px] border-zinc-900 min-h-[30px] pb-1 flex items-end px-1 font-mono text-xs sm:text-sm font-semibold text-zinc-950">
+                            {previewCert.trainer_certification || 'BCBA-D #1-12-11894'}
+                          </div>
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-zinc-700 mt-1">
+                            Responsible Trainer Certification #:
+                          </p>
+                        </div>
+
+                        <div>
+                          <div className="border-b-[1.5px] border-zinc-900 min-h-[30px] pb-1 flex items-end justify-center px-1">
+                            {previewCert.trainer_signature || templateSettings.trainer_signature ? (
+                              <img
+                                src={previewCert.trainer_signature || templateSettings.trainer_signature || ''}
+                                alt="Signature"
+                                className="max-h-8 max-w-[130px] object-contain"
+                              />
+                            ) : (
+                              <span className="text-[11px] font-serif italic text-zinc-500">
+                                Official Digital Signature
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-zinc-700 mt-1">
+                            Responsible Trainer Signature:
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Row 2: Assistant & Organization */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+                        <div>
+                          <div className="border-b-[1.5px] border-zinc-900 min-h-[28px] pb-1 flex items-end px-1 text-xs sm:text-sm text-zinc-900">
+                            {[
+                              previewCert.assist_trainer_name || templateSettings.assist_trainer_name,
+                              previewCert.assist_trainer_cert_id || templateSettings.assist_trainer_cert_id,
+                            ]
+                              .filter(Boolean)
+                              .join(', ')}
+                          </div>
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-zinc-700 mt-1">
+                            Assistant Trainer(s) Names and Certification Numbers (if applicable):
+                          </p>
+                        </div>
+
+                        <div>
+                          <div className="border-b-[1.5px] border-zinc-900 min-h-[28px] pb-1 flex items-end px-1 text-xs sm:text-sm font-medium text-zinc-900">
+                            {previewCert.organization_name || templateSettings.organization_name || 'Futures Behavior Analysis'}
+                          </div>
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-zinc-700 mt-1">
+                            Organization Name (if applicable):
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Disclaimer Footer */}
+                    <div className="pt-4 text-center text-[10px] sm:text-[10.5px] text-zinc-600 leading-tight">
+                      <p>
+                        This training program is designed to meet the 2026 training eligibility requirement for RBT certification.
+                      </p>
+                      <p>This training is offered independent of the BACB.</p>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              {/* Footer text */}
-              <p className="text-[9px] text-muted-foreground pt-2 border-t leading-relaxed max-w-lg mx-auto relative z-10">
-                {previewCert.footer || templateSettings.footer || ''}
-              </p>
             </div>
           )}
 
-          <DialogFooter className="gap-2 pt-2">
+          <DialogFooter className="gap-2 pt-2 border-t mt-2">
             <Button variant="outline" size="sm" onClick={() => setPreviewCert(null)} className="h-9 text-xs">
-              Close
+              Close Preview
             </Button>
             <Button
               size="sm"
-              onClick={() => toast.success(`Downloading PDF for ${previewCert?.cert_uid}...`)}
+              onClick={() => {
+                const renderUrl = `/api/v1/super-admin/certificates/${previewCert?.id}/render`;
+                window.open(renderUrl, '_blank');
+              }}
               className="gap-1.5 h-9 text-xs font-medium"
             >
               <Download className="h-3.5 w-3.5" />
-              Download Official PDF
+              Open / Print Official Certificate
             </Button>
           </DialogFooter>
         </DialogContent>

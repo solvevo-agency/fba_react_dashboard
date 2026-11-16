@@ -69,6 +69,7 @@ export default function InstructorsPage() {
     avatar: string;
     bio: string;
     instructor_type: 'lead' | 'regular';
+    certificate_id?: string;
   }>({
     name: '',
     designation: '',
@@ -76,6 +77,7 @@ export default function InstructorsPage() {
     avatar: '',
     bio: '',
     instructor_type: 'lead',
+    certificate_id: '',
   });
 
   const loadData = useCallback(async () => {
@@ -119,6 +121,7 @@ export default function InstructorsPage() {
         avatar: instructor.avatar || '',
         bio: instructor.bio || '',
         instructor_type: instructor.instructor_type || 'lead',
+        certificate_id: instructor.certificate_id || '',
       });
     } else {
       setEditingInstructor(null);
@@ -129,6 +132,7 @@ export default function InstructorsPage() {
         avatar: '',
         bio: '',
         instructor_type: 'lead',
+        certificate_id: '',
       });
     }
     setModalOpen(true);
@@ -410,6 +414,12 @@ export default function InstructorsPage() {
 
                       {/* Contact Email & Course Count */}
                       <div className="pt-2.5 border-t space-y-1.5 text-xs text-muted-foreground">
+                        {instructor.certificate_id && (
+                          <div className="flex items-center gap-2 text-foreground font-medium">
+                            <Award className="h-3.5 w-3.5 text-primary shrink-0" />
+                            <span className="truncate font-mono text-[11px]">{instructor.certificate_id}</span>
+                          </div>
+                        )}
                         <div className="flex items-center gap-2">
                           <Mail className="h-3.5 w-3.5 text-primary shrink-0" />
                           <span className="truncate">{instructor.email || 'No email provided'}</span>
@@ -489,6 +499,26 @@ export default function InstructorsPage() {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Lead Teacher Certificate ID (Only for lead instructor) */}
+            {formData.instructor_type === 'lead' && (
+              <div className="space-y-1.5 animate-in fade-in duration-200">
+                <Label htmlFor="inst_cert_id" className="text-xs font-semibold flex items-center gap-1.5">
+                  <Award className="h-3.5 w-3.5 text-primary" />
+                  Lead Trainer Certificate ID / BACB Certification #
+                </Label>
+                <Input
+                  id="inst_cert_id"
+                  placeholder="Enter certificate ID (e.g. BCBA-D #1-12-11894)"
+                  value={formData.certificate_id || ''}
+                  onChange={(e) => setFormData({ ...formData, certificate_id: e.target.value })}
+                  className="text-xs sm:text-sm h-9 placeholder:text-xs placeholder:text-muted-foreground/50"
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  Official trainer certification number auto-filled on student certificates.
+                </p>
+              </div>
+            )}
 
             {/* Full Name */}
             <div className="space-y-1.5">
