@@ -167,7 +167,7 @@ export function ImageUploadDropzone({
           <img
             src={resolveMediaUrl(value)}
             alt={label}
-            className={`w-full h-full object-cover ${posClass} transition-transform duration-300 group-hover:scale-[1.02]`}
+            className={`w-full h-full object-contain ${posClass} transition-transform duration-300 group-hover:scale-[1.02]`}
           />
 
           {/* Action Overlay */}

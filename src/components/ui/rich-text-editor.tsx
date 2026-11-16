@@ -61,14 +61,14 @@ export function RichTextEditor({
           cursor: pointer !important;
         }
           /* Reduce padding for list buttons */
-.tox .tox-split-button .tox-tbtn {
-  padding-left: 2px !important;
-  padding-right: 2px !important;
-}
+       .tox .tox-split-button .tox-tbtn {
+         padding-left: 2px !important;
+         padding-right: 2px !important;
+       }
 
-.tox .tox-split-button {
-  gap: 0 !important;
-}
+       .tox .tox-split-button {
+        gap: 0 !important;
+       }
         .tox .tox-tbtn:hover {
           background: hsl(var(--accent)) !important;
         }
@@ -89,26 +89,26 @@ export function RichTextEditor({
           background-color: hsl(var(--border)) !important;
         }
           /* Remove extra spacing below the toolbar */
-.tox .tox-editor-header {
-  padding-bottom: 0 !important;
-  margin-bottom: 0 !important;
-}
+      .tox .tox-editor-header {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+      }
 
-.tox .tox-toolbar-overlord {
-  padding-bottom: 0 !important;
-  margin-bottom: 0 !important;
-}
+     .tox .tox-toolbar-overlord {
+       padding-bottom: 0 !important;
+       margin-bottom: 0 !important;
+      }
 
-.tox .tox-edit-area {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
+     .tox .tox-edit-area {
+       margin-top: 0 !important;
+       padding-top: 0 !important;
+     }
 
-/* Keep the editable area aligned with the toolbar */
-.tox .tox-edit-area__iframe {
-  display: block !important;
-  margin-top: 0 !important;
-}
+  /* Keep the editable area aligned with the toolbar */
+    .tox .tox-edit-area__iframe {
+       display: block !important;
+     margin-top: 0 !important;
+    }
       `}</style>
 
       <div className="flex items-center justify-between">
@@ -144,7 +144,7 @@ export function RichTextEditor({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           rows={Math.max(4, Math.round(height / 35))}
-          className="font-mono text-xs resize-none"
+          className="font-mono text-xs resize-none pl-3"
           placeholder="Enter HTML markup directly..."
         />
       ) : (
@@ -178,11 +178,15 @@ export function RichTextEditor({
                   font-size: 13px;
                   line-height: 1.5;
                   color: #1f2937;
-                  padding: 8px 12px;
+                 padding: 10px 14px 10px 16px !important;
                   margin: 0;
                 }
-                p { margin: 0 0 8px 0; }
+                p { margin: 2px 0 8px 0; }
                 p:last-child { margin-bottom: 0; }
+                body[data-mce-placeholder]:not(.mce-visualblocks)::before {
+                padding-left: 16px !important;
+                left: 0 !important;
+               }
               `,
               branding: false,
               promotion: false,
