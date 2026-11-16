@@ -1,5 +1,31 @@
 import { apiClient, type ApiResponse } from './api';
 
+export interface AboutBannerContent {
+  title: string;
+  description: string;
+  image: string;
+  button_text?: string;
+}
+
+export interface ContactBannerContent {
+  title: string;
+  description: string;
+  image: string;
+}
+
+export interface FaqItemContent {
+  id: number;
+  question: string;
+  answer: string;
+}
+
+export interface FaqSectionContent {
+  title: string;
+  description: string;
+  image: string;
+  items: FaqItemContent[];
+}
+
 export interface CmsSectionRecord {
   id: number;
   page: string;

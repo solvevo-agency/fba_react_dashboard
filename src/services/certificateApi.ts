@@ -13,19 +13,17 @@ export interface CertificateItem {
   tier_name: string | null;
   student_email: string;
   student_avatar: string | null;
-  header_top: string | null;
-  header_middle: string | null;
-  header_bottom: string | null;
-  agency_name: string | null;
+  organization_name?: string | null;
   trainer_name: string | null;
   trainer_certification: string | null;
   assist_trainer_name: string | null;
+  assist_trainer_cert_id: string | null;
   trainer_signature: string | null;
   watermark: string | null;
-  footer: string | null;
   training_start: string | null;
   training_end: string | null;
   training_time: number;
+  training_time_display?: string;
   issue_date: string;
   pdf_file_path: string | null;
   verification_hash: string | null;
@@ -40,18 +38,12 @@ export interface CertificateMetrics {
 }
 
 export interface CertificateMetadata {
-  id: number;
-  header_top: string;
-  header_middle: string;
-  header_bottom: string;
-  agency_name: string;
-  provider_id: string;
-  trainer_name: string;
-  trainer_certification: string;
-  assist_trainer_name: string | null;
-  trainer_signature: string | null;
-  watermark: string | null;
-  footer: string | null;
+  id?: number;
+  organization_name: string;
+  assist_trainer_name: string;
+  assist_trainer_cert_id: string;
+  trainer_signature: string;
+  watermark: string;
 }
 
 export const certificateApi = {
