@@ -64,7 +64,7 @@ export const navigationSections: NavSection[] = [
       },
       {
         id: 'certificates',
-        label: 'BACB Certificates',
+        label: 'Certificates',
         path: '/dashboard/certificates',
         icon: Award,
       },

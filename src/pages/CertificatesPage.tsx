@@ -203,7 +203,7 @@ export default function CertificatesPage() {
         <div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <Award className="h-6 w-6 text-primary shrink-0" />
-            BACB Certificates & Verification Registry
+            RBT Training Certificates & Verification & Verification Registry
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
             Issue 40-hour RBT certificates, configure template metadata & signatures, and verify graduates
