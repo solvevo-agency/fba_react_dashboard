@@ -46,6 +46,73 @@ export interface StudentCertificate {
   issue_date: string;
 }
 
+export interface StudentModuleProgress {
+  id: number;
+  title: string;
+  sequence_order: number;
+  total_lessons: number;
+  completed_lessons: number;
+  is_completed: boolean;
+  progress_percentage: number;
+  status: 'Completed' | 'In Progress' | 'Not Started';
+}
+
+export interface StudentQuizAttempt {
+  id: number;
+  quiz_id: number;
+  quiz_title: string;
+  module_title: string;
+  score_percentage: number;
+  is_passed: boolean;
+  attempt_number: number;
+  total_questions: number;
+  correct_answers: number;
+  time_taken_formatted: string;
+  passing_score: number;
+  created_at: string;
+}
+
+export interface StudentTrainingHours {
+  total_minutes: number;
+  hours: number;
+  minutes: number;
+  formatted: string;
+  target_formatted: string;
+  percentage: number;
+}
+
+export interface StudentEligibility {
+  status: string;
+  badge: 'certified' | 'eligible' | 'on_track' | 'expired' | 'pending';
+  description: string;
+}
+
+export interface StudentDeadlineInfo {
+  limit_days: number;
+  minimum_days: number;
+  start_date: string | null;
+  deadline_date: string | null;
+  days_elapsed: number;
+  days_remaining: number;
+  is_expired: boolean;
+  compliance_status: string;
+  rule_note: string;
+}
+
+export interface StudentCertificateHistory {
+  id: number;
+  cert_uid: string;
+  course_title: string;
+  applicant_name: string;
+  applicant_bacb_id: string | null;
+  issue_date: string;
+  training_start: string | null;
+  training_end: string | null;
+  training_time: number;
+  status: string;
+  pdf_file_path: string | null;
+}
+
 export interface StudentDetail {
   id: number;
   first_name: string;
@@ -68,6 +135,22 @@ export interface StudentDetail {
   last_login_at: string;
   enrolled_courses: StudentEnrolledCourse[];
   certificates: StudentCertificate[];
+
+  // Enhanced academic compliance & dossier fields
+  enrollment_date?: string | null;
+  training_start_date?: string | null;
+  training_end_date?: string | null;
+  training_hours?: StudentTrainingHours;
+  modules_progress?: StudentModuleProgress[];
+  completed_modules_count?: number;
+  incomplete_modules_count?: number;
+  total_modules_count?: number;
+  quiz_attempts?: StudentQuizAttempt[];
+  quizzes_passed_count?: number;
+  quizzes_failed_count?: number;
+  eligibility?: StudentEligibility;
+  deadline_info?: StudentDeadlineInfo;
+  certificates_history?: StudentCertificateHistory[];
 }
 
 export interface CreateStudentPayload {

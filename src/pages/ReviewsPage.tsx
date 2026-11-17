@@ -109,10 +109,10 @@ export default function ReviewsPage() {
         <div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <Star className="h-6 w-6 text-amber-500 fill-amber-500" />
-            Course Reviews & Testimonials
+            Course Reviews & Ratings
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-            Monitor student feedback, course ratings, and evaluate learner testimonials
+            Monitor student feedback, course ratings, and reviews submission
           </p>
         </div>
 

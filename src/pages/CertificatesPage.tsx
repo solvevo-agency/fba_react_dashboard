@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Award,
   Search,
@@ -63,6 +63,8 @@ export default function CertificatesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'valid' | 'revoked'>('all');
   const [previewCert, setPreviewCert] = useState<CertificateItem | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const certificateRef = useRef<HTMLDivElement>(null);
 
   // Template Settings state: exactly 5 metadata fields
   const [templateSettings, setTemplateSettings] = useState<CertificateMetadata>({
@@ -188,6 +190,79 @@ export default function CertificatesPage() {
       toast.error('Failed to save certificate template settings');
     } finally {
       setSavingTemplate(false);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!previewCert || !certificateRef.current) return;
+    setIsDownloading(true);
+
+    const safeName = (previewCert.applicant_name || 'Certificate')
+      .trim()
+      .replace(/[^a-zA-Z0-9_-]/g, '_');
+    const filename = `${safeName}_Certificate.pdf`;
+
+    try {
+      // Ensure html2pdf is available
+      const getHtml2Pdf = async () => {
+        if ((window as any).html2pdf) return (window as any).html2pdf;
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+          script.onload = () => resolve((window as any).html2pdf);
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      };
+
+      const html2pdf = await getHtml2Pdf().catch(() => null);
+
+      if (html2pdf) {
+        const opt = {
+          margin: [0.15, 0.15, 0.15, 0.15],
+          filename,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
+        };
+        await html2pdf().set(opt).from(certificateRef.current).save();
+        toast.success('Certificate downloaded successfully');
+      } else {
+        // Fallback: Landscape print dialog to save as PDF
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          const certHtml = certificateRef.current.outerHTML;
+          printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <title>${previewCert.applicant_name} - Certificate</title>
+                <style>
+                  @page { size: landscape; margin: 10mm; }
+                  * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                  body { margin: 0; padding: 0; font-family: sans-serif; background: transparent; }
+                </style>
+              </head>
+              <body>
+                ${certHtml}
+                <script>
+                  window.onload = function() {
+                    window.focus();
+                    window.print();
+                    setTimeout(function() { window.close(); }, 500);
+                  };
+                </script>
+              </body>
+            </html>
+          `);
+          printWindow.document.close();
+        }
+      }
+    } catch (err) {
+      console.error('Download certificate error:', err);
+      toast.error('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -620,6 +695,7 @@ export default function CertificatesPage() {
             <div className="py-2">
               {/* Outer certificate frame with rich gradient border matching image */}
               <div
+                ref={certificateRef}
                 className="w-full rounded-lg p-4 sm:p-6 shadow-xl"
                 style={{
                   background: 'linear-gradient(135deg, #741b07 0%, #a73215 50%, #581607 100%)',
@@ -798,11 +874,11 @@ export default function CertificatesPage() {
                     </div>
 
                     {/* Disclaimer Footer */}
-                    <div className="pt-4 text-center text-[10px] sm:text-[10.5px] text-zinc-600 leading-tight">
+                    <div className="pt-4 text-center text-[10px] sm:text-[12px] text-zinc-600 leading-tight">
                       <p>
-                        This training program is designed to meet the 2026 training eligibility requirement for RBT certification.
+                       This training program is designed to meet the 2026 training eligibility requirement for RBT certification.
                       </p>
-                      <p>This training is offered independent of the BACB.</p>
+                      <p> The training is offered independent of the BACB.</p>
                     </div>
                   </div>
                 </div>
@@ -816,14 +892,21 @@ export default function CertificatesPage() {
             </Button>
             <Button
               size="sm"
-              onClick={() => {
-                const renderUrl = `/api/v1/super-admin/certificates/${previewCert?.id}/render`;
-                window.open(renderUrl, '_blank');
-              }}
+              onClick={handleDownloadPdf}
+              disabled={isDownloading}
               className="gap-1.5 h-9 text-xs font-medium"
             >
-              <Download className="h-3.5 w-3.5" />
-              Open / Print Official Certificate
+              {isDownloading ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Downloading...
+                </>
+              ) : (
+                <>
+                  <Download className="h-3.5 w-3.5" />
+                  Download
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
