@@ -13,8 +13,12 @@ export interface ApiResponse<T = unknown> {
   error?: unknown;
 }
 
+const DEFAULT_API_URL = import.meta.env.DEV
+  ? 'http://localhost:5040/api/v1'
+  : 'https://2.25.242.196/api/v1';
+
 export const API_BASE_URL =
-  (import.meta.env.VITE_API_URL as string | undefined) || 'http://localhost:5040/api/v1';
+  (import.meta.env.VITE_API_URL as string | undefined)?.trim() || DEFAULT_API_URL;
 
 export const TOKEN_STORAGE_KEY = 'fba_super_admin_token';
 export const USER_STORAGE_KEY = 'fba_super_admin_user';

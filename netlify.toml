@@ -2,6 +2,12 @@
   publish = "dist"
   command = "npm run build"
 
+# Vite inlines these at build time (overrides a broken/missing .env).
+[build.environment]
+  VITE_APP_NAME = "FBA Super Admin"
+  VITE_API_URL = "https://2.25.242.196/api/v1"
+  VITE_ASSET_URL = "https://2.25.242.196"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
