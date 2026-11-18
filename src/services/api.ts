@@ -38,7 +38,8 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000,
+  // CMS payloads embed large base64 images (~40MB); 15s is too low for Netlify→VPS.
+  timeout: 120000,
 });
 
 // Request Interceptor: Attach JWT Bearer token

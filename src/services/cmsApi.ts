@@ -52,7 +52,9 @@ export const cmsApi = {
    * Get all CMS sections across all pages (both as a flat list and grouped by page and section)
    */
   getAll: async (): Promise<CmsAllResponse> => {
-    const res = await apiClient.get<ApiResponse<CmsAllResponse>>('/super-admin/cms');
+    const res = await apiClient.get<ApiResponse<CmsAllResponse>>('/super-admin/cms', {
+      timeout: 120000,
+    });
     return res.data.data;
   },
 
