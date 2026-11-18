@@ -28,13 +28,13 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
     <div className="fixed inset-0 z-50 lg:hidden">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="fixed inset-0 bg-black/80 backdrop-blur-xs transition-opacity animate-in fade-in"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Drawer Panel */}
-      <div className="fixed inset-y-0 left-0 w-[290px] bg-sidebar text-sidebar-foreground border-r shadow-2xl flex flex-col z-50 animate-in slide-in-from-left duration-200">
+      <div className="fixed inset-y-0 left-0 w-[290px] bg-white text-black border-r shadow-2xl flex flex-col z-50 animate-in slide-in-from-left duration-200">
         {/* Drawer Header */}
         <div className="h-[var(--navbar-height)] flex items-center justify-between px-5 border-b shrink-0">
           <div className="flex items-center gap-3">
