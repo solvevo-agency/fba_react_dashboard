@@ -43,42 +43,18 @@ interface FaqItem {
   answer: string;
 }
 
-// Reusable upload helper for icon/image files
+// Reusable upload helper for icon/image files — always store a server URL, never base64.
 const uploadImage = async (file: File): Promise<string> => {
   if (!file.type.startsWith('image/')) {
     toast.error('Please upload a valid image file (PNG, JPG, WebP, SVG)');
     throw new Error('Invalid file type');
   }
 
-  // 1. Try backend storage upload if server endpoint is active
-  try {
-    const res = await cmsApi.uploadMedia(file);
-    if (res?.url) {
-      toast.success('Image uploaded successfully');
-      return res.url;
-    }
-  } catch (err) {
-    console.warn('Backend upload unavailable, falling back to local preview:', err);
+  const res = await cmsApi.uploadMedia(file);
+  if (!res?.url) {
+    throw new Error('Upload did not return a URL');
   }
-
-  // 2. Fallback to instant local base64 preview so admin UI stays 100% functional
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (result) {
-        toast.success('Image selected successfully');
-        resolve(result);
-      } else {
-        reject(new Error('Failed to read image'));
-      }
-    };
-    reader.onerror = () => {
-      toast.error('Failed to read image file');
-      reject(new Error('File read error'));
-    };
-    reader.readAsDataURL(file);
-  });
+  return res.url;
 };
 
 export default function CmsPage() {
@@ -437,17 +413,37 @@ export default function CmsPage() {
   };
 
   // Section-level save handler
-  const handleSaveSection = async (page: string, section: string, content: any, label: string) => {
+  const handleSaveSection = async (
+    page: string,
+    section: string,
+    content: any,
+    label: string,
+    options?: { silent?: boolean },
+  ) => {
     try {
       setSavingSection(section);
       await cmsApi.updateSection(page, section, content);
-      toast.success(`"${label}" section updated successfully!`);
+      if (!options?.silent) {
+        toast.success(`"${label}" section updated successfully!`);
+      }
     } catch (error) {
       console.error(`Failed to save ${label}:`, error);
       toast.error(`Failed to save "${label}" section`);
+      throw error;
     } finally {
       setSavingSection(null);
     }
+  };
+
+  /** Update local section state and immediately persist to the API (needed after image upload). */
+  const patchAndSaveHomeHero = (patch: Partial<typeof homeHero>) => {
+    setHomeHero((prev) => {
+      const next = { ...prev, ...patch };
+      void handleSaveSection('homepage', 'home_hero', next, 'Homepage Hero Media', { silent: true })
+        .then(() => toast.success('Hero image saved'))
+        .catch(() => undefined);
+      return next;
+    });
   };
 
   // Global save handler for all sections across all pages
@@ -730,7 +726,7 @@ export default function CmsPage() {
                         <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 1</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_1}
-                          onChange={(url) => setHomeHero({ ...homeHero, image_1: url })}
+                          onChange={(url) => void patchAndSaveHomeHero({ image_1: url })}
                           aspectRatio="video"
                           label="Upload Hero Image 1"
                         />
@@ -739,7 +735,7 @@ export default function CmsPage() {
                         <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 2</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_2}
-                          onChange={(url) => setHomeHero({ ...homeHero, image_2: url })}
+                          onChange={(url) => void patchAndSaveHomeHero({ image_2: url })}
                           aspectRatio="video"
                           label="Upload Hero Image 2"
                         />
@@ -748,7 +744,7 @@ export default function CmsPage() {
                         <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 3</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_3}
-                          onChange={(url) => setHomeHero({ ...homeHero, image_3: url })}
+                          onChange={(url) => void patchAndSaveHomeHero({ image_3: url })}
                           aspectRatio="video"
                           label="Upload Hero Image 3"
                         />
@@ -757,7 +753,7 @@ export default function CmsPage() {
                         <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 4</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_4}
-                          onChange={(url) => setHomeHero({ ...homeHero, image_4: url })}
+                          onChange={(url) => void patchAndSaveHomeHero({ image_4: url })}
                           aspectRatio="video"
                           label="Upload Hero Image 4"
                         />
