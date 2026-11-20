@@ -213,7 +213,9 @@ export const courseApi = {
       '/super-admin/courses/upload-media',
       formData,
       {
-        timeout: 120000,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       }
     );
     return res.data.data;

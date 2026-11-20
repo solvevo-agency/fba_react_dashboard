@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,9 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { ImageUploadDropzone } from '@/components/ui/image-upload-dropzone';
-import { cmsApi } from '@/services/cmsApi';
-import { toast } from 'sonner';
-import { uploadImage, fetchPageCmsData, FaqItem } from './cmsUtils';
+import { uploadImage, FaqItem } from './cmsUtils';
 import {
   HelpCircle,
   FileText,
@@ -20,91 +19,47 @@ import {
   Loader2,
 } from 'lucide-react';
 
-export const CommonCmsTab: React.FC = () => {
-  const [faqSection, setFaqSection] = useState<{
+export interface CommonCmsTabProps {
+  faqSection: {
     title: string;
     description: string;
     image: string;
     items: FaqItem[];
-  }>({
-    title: '',
-    description: '',
-    image: '',
-    items: [],
-  });
+  };
+  setFaqSection: React.Dispatch<React.SetStateAction<{
+    title: string;
+    description: string;
+    image: string;
+    items: FaqItem[];
+  }>>;
+  legalCms: {
+    terms: string;
+    privacy: string;
+    bacb_disclaimer: string;
+  };
+  setLegalCms: React.Dispatch<React.SetStateAction<{
+    terms: string;
+    privacy: string;
+    bacb_disclaimer: string;
+  }>>;
+  savingSection: string | null;
+  onSaveSection: (page: string, section: string, content: any, label: string) => Promise<void>;
+}
 
+export function CommonCmsTab({
+  faqSection,
+  setFaqSection,
+  legalCms,
+  setLegalCms,
+  savingSection,
+  onSaveSection,
+}: CommonCmsTabProps) {
   const [editingFaqId, setEditingFaqId] = useState<number | null>(null);
 
-  const [legalCms, setLegalCms] = useState({
-    terms: '',
-    privacy: '',
-    bacb_disclaimer: '',
-  });
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [savingSection, setSavingSection] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchCommonData();
-  }, []);
-
-  const fetchCommonData = async () => {
-    try {
-      setIsLoading(true);
-      const data = await fetchPageCmsData('common');
-      if (!data) return;
-
-      if (data.faqs) {
-        if (Array.isArray(data.faqs)) {
-          setFaqSection((prev) => ({ ...prev, items: data.faqs }));
-        } else {
-          setFaqSection({
-            title: data.faqs.title || '',
-            description: data.faqs.description || '',
-            image: data.faqs.image || '',
-            items: Array.isArray(data.faqs.items)
-              ? data.faqs.items
-              : Array.isArray(data.faqs.faqs)
-                ? data.faqs.faqs
-                : [],
-          });
-        }
-      }
-
-      if (data.legal) {
-        setLegalCms((prev) => ({ ...prev, ...data.legal }));
-      }
-    } catch (error) {
-      console.error('Failed to load Common CMS data:', error);
-      toast.error('Failed to load FAQs & Legal Policies content');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSaveSection = async (section: string, content: any, label: string) => {
-    try {
-      setSavingSection(section);
-      await cmsApi.updateSection('common', section, content);
-      toast.success(`"${label}" section updated successfully!`);
-    } catch (error) {
-      console.error(`Failed to save ${label}:`, error);
-      toast.error(`Failed to save ${label}`);
-    } finally {
-      setSavingSection(null);
-    }
-  };
-
-  const handleToggleEditFaq = async (id: number) => {
+  const handleToggleEditFaq = (id: number) => {
     if (editingFaqId === id) {
       setEditingFaqId(null);
-      try {
-        await cmsApi.updateSection('common', 'faqs', faqSection);
-        toast.success('FAQ updated and saved successfully');
-      } catch (e) {
-        console.error('Failed to save FAQ to server:', e);
-        toast.error('Failed to save FAQ to server');
-      }
+      onSaveSection('common', 'faqs', faqSection, 'FAQs');
     } else {
       setEditingFaqId(id);
     }
@@ -128,30 +83,14 @@ export const CommonCmsTab: React.FC = () => {
       items: [...prev.items, newFaq],
     }));
     setEditingFaqId(newFaq.id);
-    toast.info('New FAQ added. You can now edit the question and answer directly.');
   };
 
-  const handleDeleteFaq = async (id: number) => {
+  const handleDeleteFaq = (id: number) => {
     const updatedItems = faqSection.items.filter((f) => f.id !== id);
     const updatedSection = { ...faqSection, items: updatedItems };
     setFaqSection(updatedSection);
-    try {
-      await cmsApi.updateSection('common', 'faqs', updatedSection);
-      toast.success('FAQ item removed');
-    } catch (e) {
-      console.error('Failed to remove FAQ from server:', e);
-      toast.error('Failed to remove FAQ from server');
-    }
+    onSaveSection('common', 'faqs', updatedSection, 'FAQs');
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-16 text-muted-foreground text-sm gap-2">
-        <Loader2 className="h-5 w-5 animate-spin" />
-        Loading FAQs & Legal content...
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -171,7 +110,7 @@ export const CommonCmsTab: React.FC = () => {
             <Button
               size="sm"
               variant="outline"
-              onClick={() => handleSaveSection('faqs', faqSection, 'FAQs')}
+              onClick={() => onSaveSection('common', 'faqs', faqSection, 'FAQs')}
               disabled={savingSection === 'faqs'}
               className="h-8 text-xs gap-1.5"
             >
@@ -355,7 +294,7 @@ export const CommonCmsTab: React.FC = () => {
           </div>
           <Button
             size="sm"
-            onClick={() => handleSaveSection('legal', legalCms, 'Legal Policies')}
+            onClick={() => onSaveSection('common', 'legal', legalCms, 'Legal Policies')}
             disabled={savingSection === 'legal'}
             className="gap-1.5 h-8 text-xs font-medium"
           >
@@ -387,4 +326,4 @@ export const CommonCmsTab: React.FC = () => {
       </Card>
     </div>
   );
-};
+}
