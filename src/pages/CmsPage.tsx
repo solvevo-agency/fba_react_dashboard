@@ -5,9 +5,9 @@ import {
   Save,
   Home,
   Info,
-  Mail,
-  GraduationCap,
-  HelpCircle,
+  Phone,
+  BookOpen,
+  Layers,
   Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,8 +25,10 @@ import {
 
 export default function CmsPage() {
   // -------------------------------------------------------------
-  // 1. HOMEPAGE CMS STATE
+  // 1. HOMEPAGE CMS STATE (from /admin/webpages/homepage/)
   // -------------------------------------------------------------
+
+  // Head Section (Order 1: Title, Subtitle, Buttons)
   const [homeHead, setHomeHead] = useState({
     title: '',
     subtitle: '',
@@ -34,6 +36,7 @@ export default function CmsPage() {
     btn_2: '',
   });
 
+  // Hero Section (Order 2: 4 Images + 3 Badges/Pills)
   const [homeHero, setHomeHero] = useState({
     image_1: '',
     image_2: '',
@@ -44,6 +47,7 @@ export default function CmsPage() {
     pill_3: '',
   });
 
+  // Process Section (Order 3: Title 1, Image, 4 Process steps)
   const [homeProcess, setHomeProcess] = useState({
     title: '',
     image: '',
@@ -55,6 +59,7 @@ export default function CmsPage() {
     ],
   });
 
+  // What Sets Us Apart / Info Icons (Order 4: Head left + 5 items right)
   const [homeInfoIcons, setHomeInfoIcons] = useState({
     head_subtitle: '',
     head_title: '',
@@ -69,6 +74,7 @@ export default function CmsPage() {
     ],
   });
 
+  // Course Cards (Order 5: Head + 3 Cards)
   const [homeCourseCards, setHomeCourseCards] = useState({
     head_subtitle: '',
     head_title: '',
@@ -79,6 +85,7 @@ export default function CmsPage() {
     ],
   });
 
+  // Starrer / Featured Instructor (Order 6)
   const [homeStarrer, setHomeStarrer] = useState({
     title: '',
     subtitle: '',
@@ -86,11 +93,13 @@ export default function CmsPage() {
     image: '',
   });
 
+  // Feedback Head (Order 7)
   const [homeFeedback, setHomeFeedback] = useState({
     title: '',
     subtitle: '',
   });
 
+  // Mission Section (Order 8)
   const [homeMission, setHomeMission] = useState({
     title: '',
     detail: '',
@@ -98,8 +107,10 @@ export default function CmsPage() {
   });
 
   // -------------------------------------------------------------
-  // 2. ABOUT US CMS STATE
+  // 2. ABOUT US CMS STATE (from /admin/webpages/about_us)
   // -------------------------------------------------------------
+
+  // Header Banner Section (Order in page: 1)
   const [aboutBanner, setAboutBanner] = useState({
     title: '',
     description: '',
@@ -107,6 +118,7 @@ export default function CmsPage() {
     button_text: '',
   });
 
+  // Program Overview & Counters (Order in page: 2)
   const [aboutProgram, setAboutProgram] = useState({
     subtitle: '',
     title: '',
@@ -121,6 +133,7 @@ export default function CmsPage() {
     ],
   });
 
+  // Watch and Learn (Order in page: 3)
   const [aboutWatch, setAboutWatch] = useState({
     subtitle: '',
     title: '',
@@ -129,6 +142,7 @@ export default function CmsPage() {
     thumbnail: '',
   });
 
+  // Career Steps (Order in page: 4)
   const [aboutCareer, setAboutCareer] = useState({
     subtitle: '',
     title: '',
@@ -141,6 +155,7 @@ export default function CmsPage() {
     ],
   });
 
+  // Commitments Section (Order in page: 5)
   const [aboutCommitment, setAboutCommitment] = useState({
     subtitle: '',
     title: '',
@@ -153,7 +168,7 @@ export default function CmsPage() {
   });
 
   // -------------------------------------------------------------
-  // 3. CONTACT US CMS STATE
+  // 3. CONTACT US CMS STATE (from /admin/webpages/contact)
   // -------------------------------------------------------------
   const [contactBanner, setContactBanner] = useState({
     title: '',
@@ -176,7 +191,7 @@ export default function CmsPage() {
   });
 
   // -------------------------------------------------------------
-  // 4. COURSE PAGE CMS STATE
+  // 4. COURSE PAGE CMS STATE (from /admin/webpages/course-page/index)
   // -------------------------------------------------------------
   const [coursePageCms, setCoursePageCms] = useState({
     head_subtitle: '',
@@ -204,6 +219,8 @@ export default function CmsPage() {
     items: [],
   });
 
+  const [editingFaqId, setEditingFaqId] = useState<number | null>(null);
+
   const [legalCms, setLegalCms] = useState({
     terms: '',
     privacy: '',
@@ -214,7 +231,7 @@ export default function CmsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [savingSection, setSavingSection] = useState<string | null>(null);
 
-  // Load live data from backend CMS on mount using exact original API
+  // Load live data from backend CMS on mount
   useEffect(() => {
     fetchCmsData();
   }, []);
@@ -223,7 +240,7 @@ export default function CmsPage() {
     try {
       setIsLoading(true);
       const data = await cmsApi.getAll();
-      const g = data?.grouped || (data as any)?.data?.grouped || {};
+      const g = data.grouped || {};
 
       if (g.homepage?.home_head) {
         setHomeHead((prev) => ({ ...prev, ...g.homepage.home_head }));
@@ -236,8 +253,7 @@ export default function CmsPage() {
           ...prev,
           ...g.homepage.home_process,
           steps:
-            Array.isArray(g.homepage.home_process.steps) &&
-            g.homepage.home_process.steps.length > 0
+            Array.isArray(g.homepage.home_process.steps) && g.homepage.home_process.steps.length > 0
               ? g.homepage.home_process.steps
               : prev.steps,
         }));
@@ -247,8 +263,7 @@ export default function CmsPage() {
           ...prev,
           ...g.homepage.home_apart,
           items:
-            Array.isArray(g.homepage.home_apart.items) &&
-            g.homepage.home_apart.items.length > 0
+            Array.isArray(g.homepage.home_apart.items) && g.homepage.home_apart.items.length > 0
               ? g.homepage.home_apart.items
               : prev.items,
         }));
@@ -258,8 +273,7 @@ export default function CmsPage() {
           ...prev,
           ...g.homepage.home_courses,
           cards:
-            Array.isArray(g.homepage.home_courses.cards) &&
-            g.homepage.home_courses.cards.length > 0
+            Array.isArray(g.homepage.home_courses.cards) && g.homepage.home_courses.cards.length > 0
               ? g.homepage.home_courses.cards
               : prev.cards,
         }));
@@ -289,8 +303,7 @@ export default function CmsPage() {
           ...prev,
           ...g.about_us.about_program,
           counters:
-            Array.isArray(g.about_us.about_program.counters) &&
-            g.about_us.about_program.counters.length > 0
+            Array.isArray(g.about_us.about_program.counters) && g.about_us.about_program.counters.length > 0
               ? g.about_us.about_program.counters
               : prev.counters,
         }));
@@ -303,8 +316,7 @@ export default function CmsPage() {
           ...prev,
           ...g.about_us.about_career,
           steps:
-            Array.isArray(g.about_us.about_career.steps) &&
-            g.about_us.about_career.steps.length > 0
+            Array.isArray(g.about_us.about_career.steps) && g.about_us.about_career.steps.length > 0
               ? g.about_us.about_career.steps
               : prev.steps,
         }));
@@ -314,8 +326,7 @@ export default function CmsPage() {
           ...prev,
           ...g.about_us.about_commitment,
           cards:
-            Array.isArray(g.about_us.about_commitment.cards) &&
-            g.about_us.about_commitment.cards.length > 0
+            Array.isArray(g.about_us.about_commitment.cards) && g.about_us.about_commitment.cards.length > 0
               ? g.about_us.about_commitment.cards
               : prev.cards,
         }));
@@ -338,8 +349,7 @@ export default function CmsPage() {
           ...prev,
           ...g.course_page.course_page_details,
           widgets:
-            Array.isArray(g.course_page.course_page_details.widgets) &&
-            g.course_page.course_page_details.widgets.length > 0
+            Array.isArray(g.course_page.course_page_details.widgets) && g.course_page.course_page_details.widgets.length > 0
               ? g.course_page.course_page_details.widgets
               : prev.widgets,
         }));
@@ -355,9 +365,7 @@ export default function CmsPage() {
             image: g.common.faqs.image || '',
             items: Array.isArray(g.common.faqs.items)
               ? g.common.faqs.items
-              : Array.isArray(g.common.faqs.faqs)
-                ? g.common.faqs.faqs
-                : [],
+              : (Array.isArray(g.common.faqs.faqs) ? g.common.faqs.faqs : []),
           });
         }
       }
@@ -431,6 +439,53 @@ export default function CmsPage() {
     }
   };
 
+  const handleToggleEditFaq = async (id: number) => {
+    if (editingFaqId === id) {
+      setEditingFaqId(null);
+      try {
+        await cmsApi.updateSection('common', 'faqs', faqSection);
+        toast.success('FAQ updated and saved successfully');
+      } catch (e) {
+        toast.error('Failed to save FAQ to server');
+      }
+    } else {
+      setEditingFaqId(id);
+    }
+  };
+
+  const handleUpdateFaq = (id: number, field: 'question' | 'answer', value: string) => {
+    setFaqSection((prev) => ({
+      ...prev,
+      items: prev.items.map((f) => (f.id === id ? { ...f, [field]: value } : f)),
+    }));
+  };
+
+  const handleAddFaq = () => {
+    const newFaq: FaqItem = {
+      id: Date.now(),
+      question: '',
+      answer: '',
+    };
+    setFaqSection((prev) => ({
+      ...prev,
+      items: [...prev.items, newFaq],
+    }));
+    setEditingFaqId(newFaq.id);
+    toast.info('New FAQ added. You can now edit the question and answer directly.');
+  };
+
+  const handleDeleteFaq = async (id: number) => {
+    const updatedItems = faqSection.items.filter((f) => f.id !== id);
+    const updatedSection = { ...faqSection, items: updatedItems };
+    setFaqSection(updatedSection);
+    try {
+      await cmsApi.updateSection('common', 'faqs', updatedSection);
+      toast.success('FAQ item removed');
+    } catch (e) {
+      toast.error('Failed to remove FAQ from server');
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300 pb-12">
       {/* Top Header */}
@@ -441,8 +496,7 @@ export default function CmsPage() {
             Website CMS & Dynamic Content Manager
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-            Configure Homepage, About Us, Contact, Course Page, FAQs, and Compliance policies across
-            all student portals.
+            Configure Homepage, About Us, Contact, Course Page, FAQs, and Compliance policies across all student portals.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -452,119 +506,113 @@ export default function CmsPage() {
             disabled={isSaving || isLoading}
             className="gap-1.5 h-9 text-xs sm:text-sm font-medium shadow-xs"
           >
-            {isSaving ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-            {isSaving ? 'Saving Everything...' : 'Save All Website Changes'}
+            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            Save All CMS Sections
           </Button>
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20 text-muted-foreground text-sm gap-2">
-          <Loader2 className="h-5 w-5 animate-spin text-primary" />
-          Loading website CMS content...
-        </div>
-      ) : (
-        /* Main Tabs Navigation */
-        <Tabs defaultValue="homepage" className="space-y-6">
-          <TabsList className="bg-muted/60 p-1 flex-wrap h-auto w-full justify-start gap-1 border">
-            <TabsTrigger value="homepage" className="gap-1.5 text-xs sm:text-sm py-2 px-3">
-              <Home className="h-4 w-4" /> Homepage CMS
-            </TabsTrigger>
-            <TabsTrigger value="about" className="gap-1.5 text-xs sm:text-sm py-2 px-3">
-              <Info className="h-4 w-4" /> About Us CMS
-            </TabsTrigger>
-            <TabsTrigger value="contact" className="gap-1.5 text-xs sm:text-sm py-2 px-3">
-              <Mail className="h-4 w-4" /> Contact Us CMS
-            </TabsTrigger>
-            <TabsTrigger value="course_page" className="gap-1.5 text-xs sm:text-sm py-2 px-3">
-              <GraduationCap className="h-4 w-4" /> Course Page CMS
-            </TabsTrigger>
-            <TabsTrigger value="common" className="gap-1.5 text-xs sm:text-sm py-2 px-3">
-              <HelpCircle className="h-4 w-4" /> FAQs & Legal Policies
-            </TabsTrigger>
-          </TabsList>
+      {/* Main Tabs for Webpages */}
+      <Tabs defaultValue="homepage" className="space-y-6">
+        <TabsList className="bg-muted p-1 flex flex-wrap h-auto gap-1">
+          <TabsTrigger value="homepage" className="text-xs gap-1.5 py-1.5 px-3">
+            <Home className="h-3.5 w-3.5" /> Homepage CMS
+          </TabsTrigger>
+          <TabsTrigger value="about" className="text-xs gap-1.5 py-1.5 px-3">
+            <Info className="h-3.5 w-3.5" /> About Us CMS
+          </TabsTrigger>
+          <TabsTrigger value="contact" className="text-xs gap-1.5 py-1.5 px-3">
+            <Phone className="h-3.5 w-3.5" /> Contact Us
+          </TabsTrigger>
+          <TabsTrigger value="course_page" className="text-xs gap-1.5 py-1.5 px-3">
+            <BookOpen className="h-3.5 w-3.5" /> Course Page CMS
+          </TabsTrigger>
+          <TabsTrigger value="common" className="text-xs gap-1.5 py-1.5 px-3">
+            <Layers className="h-3.5 w-3.5" /> FAQs & Legal Policies
+          </TabsTrigger>
+        </TabsList>
 
-          {/* TAB 1: HOMEPAGE */}
-          <TabsContent value="homepage" className="space-y-6">
-            <HomepageCmsTab
-              homeHead={homeHead}
-              setHomeHead={setHomeHead}
-              homeHero={homeHero}
-              setHomeHero={setHomeHero}
-              homeProcess={homeProcess}
-              setHomeProcess={setHomeProcess}
-              homeInfoIcons={homeInfoIcons}
-              setHomeInfoIcons={setHomeInfoIcons}
-              homeCourseCards={homeCourseCards}
-              setHomeCourseCards={setHomeCourseCards}
-              homeStarrer={homeStarrer}
-              setHomeStarrer={setHomeStarrer}
-              homeFeedback={homeFeedback}
-              setHomeFeedback={setHomeFeedback}
-              homeMission={homeMission}
-              setHomeMission={setHomeMission}
-              savingSection={savingSection}
-              onSaveSection={handleSaveSection}
-            />
-          </TabsContent>
+        {/* TAB 1: HOMEPAGE CMS (/admin/webpages/homepage/) */}
+        <TabsContent value="homepage" className="space-y-6">
+          <HomepageCmsTab
+            homeHead={homeHead}
+            setHomeHead={setHomeHead}
+            homeHero={homeHero}
+            setHomeHero={setHomeHero}
+            homeProcess={homeProcess}
+            setHomeProcess={setHomeProcess}
+            homeInfoIcons={homeInfoIcons}
+            setHomeInfoIcons={setHomeInfoIcons}
+            homeCourseCards={homeCourseCards}
+            setHomeCourseCards={setHomeCourseCards}
+            homeStarrer={homeStarrer}
+            setHomeStarrer={setHomeStarrer}
+            homeFeedback={homeFeedback}
+            setHomeFeedback={setHomeFeedback}
+            homeMission={homeMission}
+            setHomeMission={setHomeMission}
+            savingSection={savingSection}
+            handleSaveSection={handleSaveSection}
+          />
+        </TabsContent>
 
-          {/* TAB 2: ABOUT US */}
-          <TabsContent value="about" className="space-y-6">
-            <AboutUsCmsTab
-              aboutBanner={aboutBanner}
-              setAboutBanner={setAboutBanner}
-              aboutProgram={aboutProgram}
-              setAboutProgram={setAboutProgram}
-              aboutWatch={aboutWatch}
-              setAboutWatch={setAboutWatch}
-              aboutCareer={aboutCareer}
-              setAboutCareer={setAboutCareer}
-              aboutCommitment={aboutCommitment}
-              setAboutCommitment={setAboutCommitment}
-              savingSection={savingSection}
-              onSaveSection={handleSaveSection}
-            />
-          </TabsContent>
+        {/* TAB 2: ABOUT US CMS (/admin/webpages/about_us) */}
+        <TabsContent value="about" className="space-y-6">
+          <AboutUsCmsTab
+            aboutBanner={aboutBanner}
+            setAboutBanner={setAboutBanner}
+            aboutProgram={aboutProgram}
+            setAboutProgram={setAboutProgram}
+            aboutWatch={aboutWatch}
+            setAboutWatch={setAboutWatch}
+            aboutCareer={aboutCareer}
+            setAboutCareer={setAboutCareer}
+            aboutCommitment={aboutCommitment}
+            setAboutCommitment={setAboutCommitment}
+            savingSection={savingSection}
+            handleSaveSection={handleSaveSection}
+          />
+        </TabsContent>
 
-          {/* TAB 3: CONTACT US */}
-          <TabsContent value="contact" className="space-y-6">
-            <ContactUsCmsTab
-              contactBanner={contactBanner}
-              setContactBanner={setContactBanner}
-              contactCms={contactCms}
-              setContactCms={setContactCms}
-              savingSection={savingSection}
-              onSaveSection={handleSaveSection}
-            />
-          </TabsContent>
+        {/* TAB 3: CONTACT US CMS (/admin/webpages/contact) */}
+        <TabsContent value="contact" className="space-y-6">
+          <ContactUsCmsTab
+            contactBanner={contactBanner}
+            setContactBanner={setContactBanner}
+            contactCms={contactCms}
+            setContactCms={setContactCms}
+            savingSection={savingSection}
+            handleSaveSection={handleSaveSection}
+          />
+        </TabsContent>
 
-          {/* TAB 4: COURSE PAGE */}
-          <TabsContent value="course_page" className="space-y-6">
-            <CoursePageCmsTab
-              coursePageCms={coursePageCms}
-              setCoursePageCms={setCoursePageCms}
-              savingSection={savingSection}
-              onSaveSection={handleSaveSection}
-            />
-          </TabsContent>
+        {/* TAB 4: COURSE PAGE CMS (/admin/webpages/course-page/index) */}
+        <TabsContent value="course_page" className="space-y-6">
+          <CoursePageCmsTab
+            coursePageCms={coursePageCms}
+            setCoursePageCms={setCoursePageCms}
+            savingSection={savingSection}
+            handleSaveSection={handleSaveSection}
+          />
+        </TabsContent>
 
-          {/* TAB 5: COMMON (FAQS & LEGAL) */}
-          <TabsContent value="common" className="space-y-6">
-            <CommonCmsTab
-              faqSection={faqSection}
-              setFaqSection={setFaqSection}
-              legalCms={legalCms}
-              setLegalCms={setLegalCms}
-              savingSection={savingSection}
-              onSaveSection={handleSaveSection}
-            />
-          </TabsContent>
-        </Tabs>
-      )}
+        {/* TAB 5: COMMON SECTIONS (FAQS & LEGAL POLICIES) */}
+        <TabsContent value="common" className="space-y-6">
+          <CommonCmsTab
+            faqSection={faqSection}
+            setFaqSection={setFaqSection}
+            editingFaqId={editingFaqId}
+            legalCms={legalCms}
+            setLegalCms={setLegalCms}
+            savingSection={savingSection}
+            handleSaveSection={handleSaveSection}
+            handleToggleEditFaq={handleToggleEditFaq}
+            handleUpdateFaq={handleUpdateFaq}
+            handleAddFaq={handleAddFaq}
+            handleDeleteFaq={handleDeleteFaq}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
