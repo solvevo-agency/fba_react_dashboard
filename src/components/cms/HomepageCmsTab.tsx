@@ -21,7 +21,7 @@ import { resolveMediaUrl } from '@/components/ui/video-upload-dropzone';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { cmsApi } from '@/services/cmsApi';
 import { toast } from 'sonner';
-import { uploadImage } from './cmsUtils';
+import { uploadImage, fetchPageCmsData } from './cmsUtils';
 
 export function HomepageCmsTab() {
   // Head Section (Order 1: Title, Subtitle, Buttons)
@@ -112,7 +112,7 @@ export function HomepageCmsTab() {
   const fetchHomepageData = async () => {
     try {
       setIsLoading(true);
-      const data = await cmsApi.getPage('homepage');
+      const data = await fetchPageCmsData('homepage');
       if (!data) return;
 
       if (data.home_head) {

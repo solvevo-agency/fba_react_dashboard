@@ -19,7 +19,7 @@ import { VideoUploadDropzone } from '@/components/ui/video-upload-dropzone';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { cmsApi } from '@/services/cmsApi';
 import { toast } from 'sonner';
-import { uploadImage } from './cmsUtils';
+import { uploadImage, fetchPageCmsData } from './cmsUtils';
 
 export function AboutUsCmsTab() {
   // Header Banner Section (Order in page: 1)
@@ -84,7 +84,7 @@ export function AboutUsCmsTab() {
   const fetchAboutData = async () => {
     try {
       setIsLoading(true);
-      const data = await cmsApi.getPage('about_us');
+      const data = await fetchPageCmsData('about_us');
       if (!data) return;
 
       const ab = data.about_banner || data.banner;

@@ -15,7 +15,7 @@ import { ImageUploadDropzone } from '@/components/ui/image-upload-dropzone';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { cmsApi } from '@/services/cmsApi';
 import { toast } from 'sonner';
-import { uploadImage } from './cmsUtils';
+import { uploadImage, fetchPageCmsData } from './cmsUtils';
 
 export function ContactUsCmsTab() {
   // Header Banner Section (Order in page: 1)
@@ -49,7 +49,7 @@ export function ContactUsCmsTab() {
   const fetchContactData = async () => {
     try {
       setIsLoading(true);
-      const data = await cmsApi.getPage('contact_us');
+      const data = await fetchPageCmsData('contact_us');
       if (!data) return;
 
       const cb = data.contact_banner || data.banner;

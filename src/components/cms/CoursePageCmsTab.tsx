@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { cmsApi } from '@/services/cmsApi';
 import { toast } from 'sonner';
+import { fetchPageCmsData } from './cmsUtils';
 
 export function CoursePageCmsTab() {
   const [coursePageCms, setCoursePageCms] = useState({
@@ -37,7 +38,7 @@ export function CoursePageCmsTab() {
   const fetchCoursePageData = async () => {
     try {
       setIsLoading(true);
-      const data = await cmsApi.getPage('course_page');
+      const data = await fetchPageCmsData('course_page');
       if (!data) return;
 
       if (data.course_page_details) {

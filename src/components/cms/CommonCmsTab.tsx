@@ -8,7 +8,7 @@ import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { ImageUploadDropzone } from '@/components/ui/image-upload-dropzone';
 import { cmsApi } from '@/services/cmsApi';
 import { toast } from 'sonner';
-import { uploadImage, FaqItem } from './cmsUtils';
+import { uploadImage, fetchPageCmsData, FaqItem } from './cmsUtils';
 import {
   HelpCircle,
   FileText,
@@ -51,8 +51,8 @@ export const CommonCmsTab: React.FC = () => {
   const fetchCommonData = async () => {
     try {
       setIsLoading(true);
-      const res = await cmsApi.getPage('common');
-      const data = res.data?.sections || res.data || {};
+      const data = await fetchPageCmsData('common');
+      if (!data) return;
 
       if (data.faqs) {
         if (Array.isArray(data.faqs)) {
