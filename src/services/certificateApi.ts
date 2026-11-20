@@ -76,7 +76,7 @@ export const certificateApi = {
       '/super-admin/certificates/upload-asset',
       formData,
       {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 60000,
       }
     );
     return res.data.data;

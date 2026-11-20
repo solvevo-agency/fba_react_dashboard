@@ -122,7 +122,7 @@ export const instructorApi = {
       '/super-admin/instructors/upload-avatar',
       formData,
       {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 60000,
       }
     );
     return res.data.data.url;

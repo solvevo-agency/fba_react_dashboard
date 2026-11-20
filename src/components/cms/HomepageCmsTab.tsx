@@ -329,6 +329,7 @@ export function HomepageCmsTab() {
                   <ImageUploadDropzone
                     value={homeHero.image_1}
                     onChange={(url) => setHomeHero({ ...homeHero, image_1: url })}
+                    onUploadFile={uploadImage}
                     aspectRatio="video"
                     label="Upload Hero Image 1"
                   />
@@ -337,6 +338,7 @@ export function HomepageCmsTab() {
                   <ImageUploadDropzone
                     value={homeHero.image_2}
                     onChange={(url) => setHomeHero({ ...homeHero, image_2: url })}
+                    onUploadFile={uploadImage}
                     aspectRatio="video"
                     label="Upload Hero Image 2"
                   />
@@ -345,6 +347,7 @@ export function HomepageCmsTab() {
                   <ImageUploadDropzone
                     value={homeHero.image_3}
                     onChange={(url) => setHomeHero({ ...homeHero, image_3: url })}
+                    onUploadFile={uploadImage}
                     aspectRatio="video"
                     label="Upload Hero Image 3"
                   />
@@ -353,6 +356,7 @@ export function HomepageCmsTab() {
                   <ImageUploadDropzone
                     value={homeHero.image_4}
                     onChange={(url) => setHomeHero({ ...homeHero, image_4: url })}
+                    onUploadFile={uploadImage}
                     aspectRatio="video"
                     label="Upload Hero Image 4"
                   />
@@ -451,6 +455,7 @@ export function HomepageCmsTab() {
                 <ImageUploadDropzone
                   value={homeProcess.image}
                   onChange={(url) => setHomeProcess({ ...homeProcess, image: url })}
+                  onUploadFile={uploadImage}
                   aspectRatio="wide"
                   label="Process Feature Image"
                 />
@@ -582,6 +587,7 @@ export function HomepageCmsTab() {
                 <ImageUploadDropzone
                   value={homeInfoIcons.head_image}
                   onChange={(url) => setHomeInfoIcons({ ...homeInfoIcons, head_image: url })}
+                  onUploadFile={uploadImage}
                   aspectRatio="banner"
                   label="Head Illustration Image"
                 />
@@ -762,6 +768,7 @@ export function HomepageCmsTab() {
                         newCards[idx].image = url;
                         setHomeCourseCards({ ...homeCourseCards, cards: newCards });
                       }}
+                      onUploadFile={uploadImage}
                       aspectRatio="video"
                       label={`Course Thumbnail ${idx + 1}`}
                     />
@@ -870,6 +877,7 @@ export function HomepageCmsTab() {
                 <ImageUploadDropzone
                   value={homeStarrer.image}
                   onChange={(url) => setHomeStarrer({ ...homeStarrer, image: url })}
+                  onUploadFile={uploadImage}
                   aspectRatio="square"
                   label="Upload Instructor Portrait Image"
                   className="w-full !important"
@@ -982,6 +990,7 @@ export function HomepageCmsTab() {
                 <ImageUploadDropzone
                   value={homeMission.image}
                   onChange={(url) => setHomeMission({ ...homeMission, image: url })}
+                  onUploadFile={uploadImage}
                   aspectRatio="banner"
                   label="Upload Mission Image"
                 />

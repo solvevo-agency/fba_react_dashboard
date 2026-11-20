@@ -107,9 +107,7 @@ export const cmsApi = {
       '/super-admin/cms/upload-media',
       formData,
       {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        timeout: 60000,
       }
     );
     return res.data.data;

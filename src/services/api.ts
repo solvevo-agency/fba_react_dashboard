@@ -37,13 +37,21 @@ export const apiClient = axios.create({
   timeout: 15000,
 });
 
-// Request Interceptor: Attach JWT Bearer token
+// Request Interceptor: Attach JWT Bearer token & handle FormData
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getStoredToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Automatically remove Content-Type when sending FormData so Axios/browser
+    // attaches the correct multipart boundary header (e.g. boundary=----WebKitFormBoundary...)
+    // Manually setting 'multipart/form-data' strips the boundary and causes multer to hang and time out.
+    if (config.data instanceof FormData && config.headers) {
+      delete config.headers['Content-Type'];
+    }
+
     return config;
   },
   (error: AxiosError) => Promise.reject(error)

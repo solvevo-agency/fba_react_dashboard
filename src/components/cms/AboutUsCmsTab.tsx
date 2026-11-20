@@ -467,6 +467,7 @@ export function AboutUsCmsTab() {
                 <ImageUploadDropzone
                   value={aboutWatch.thumbnail}
                   onChange={(url) => setAboutWatch({ ...aboutWatch, thumbnail: url })}
+                  onUploadFile={uploadImage}
                   aspectRatio="video"
                   label="Upload Video Thumbnail"
                 />
