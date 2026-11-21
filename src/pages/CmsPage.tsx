@@ -1,41 +1,32 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import {
   Globe,
   Save,
   Home,
-  Phone,
-  HelpCircle,
-  FileText,
-  Plus,
-  Trash2,
-  Edit2,
-  Check,
-  Sparkles,
-  Share2,
-  BookOpen,
   Info,
+  Phone,
+  BookOpen,
   Layers,
-  Award,
-  Video,
+  Loader2,
+  GraduationCap,
   MessageSquare,
   Compass,
-  GraduationCap,
-  HeartHandshake,
+  Award,
   Workflow,
-  Search,
-  Loader2,
+  Sparkles,
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ImageUploadDropzone } from '@/components/ui/image-upload-dropzone';
-import { VideoUploadDropzone, resolveMediaUrl } from '@/components/ui/video-upload-dropzone';
-import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { cmsApi } from '@/services/cmsApi';
 import { toast } from 'sonner';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
+import { ImageUploadDropzone } from '@/components/ui/image-upload-dropzone';
+import { resolveMediaUrl } from '@/components/ui/video-upload-dropzone';
+import { AboutUsCmsTab, CommonCmsTab, ContactUsCmsTab, CoursePageCmsTab } from '@/components/cms';
 
 interface FaqItem {
   id: number;
@@ -152,55 +143,58 @@ export default function CmsPage() {
     button_text: '',
   });
 
-  // Section 2: Program Info & Counters
+  // Program Overview & Counters (Order in page: 2)
   const [aboutProgram, setAboutProgram] = useState({
+    subtitle: '',
     title: '',
-    detail: '',
+    description: '',
     image_left: '',
     image_right: '',
-    button: '',
     counters: [
-      { order: 2, number: '', label: '' },
-      { order: 3, number: '', label: '' },
-      { order: 4, number: '', label: '' },
+      { number: '98%', label: 'Exam Pass Rate', order: 1 },
+      { number: '40+', label: 'Hours of Training', order: 2 },
+      { number: '1,500+', label: 'Certified Trainees', order: 3 },
+      { number: '100%', label: 'BACB Task List Aligned', order: 4 },
     ],
   });
 
-  // Section 3: Watch & Learn / Demo Video + Video Thumbnail
+  // Watch and Learn (Order in page: 3)
   const [aboutWatch, setAboutWatch] = useState({
+    subtitle: '',
     title: '',
-    detail: '',
+    description: '',
     video_url: '',
     thumbnail: '',
   });
 
-  // Section 4: Career Changes Lives (Header + 3 Steps)
+  // Career Steps (Order in page: 4)
   const [aboutCareer, setAboutCareer] = useState({
-    head_title: '',
-    head_detail: '',
+    subtitle: '',
+    title: '',
+    description: '',
     steps: [
-      { order: 2, title: '', detail: '' },
-      { order: 3, title: '', detail: '' },
-      { order: 4, title: '', detail: '' },
+      { order: 1, title: '', subtitle: '' },
+      { order: 2, title: '', subtitle: '' },
+      { order: 3, title: '', subtitle: '' },
+      { order: 4, title: '', subtitle: '' },
     ],
   });
 
-  // Section 5: Commitment Cards (Header + 3 Cards)
+  // Commitments Section (Order in page: 5)
   const [aboutCommitment, setAboutCommitment] = useState({
-    head_title: '',
-    head_detail: '',
+    subtitle: '',
+    title: '',
+    description: '',
     cards: [
-      { order: 2, title: '', detail: '' },
-      { order: 3, title: '', detail: '' },
-      { order: 4, title: '', detail: '' },
+      { title: '', description: '', order: 1 },
+      { title: '', description: '', order: 2 },
+      { title: '', description: '', order: 3 },
     ],
   });
 
   // -------------------------------------------------------------
   // 3. CONTACT US CMS STATE (from /admin/webpages/contact)
   // -------------------------------------------------------------
-
-  // Header Banner Section (Order in page: 1)
   const [contactBanner, setContactBanner] = useState({
     title: '',
     description: '',
@@ -227,7 +221,6 @@ export default function CmsPage() {
   const [coursePageCms, setCoursePageCms] = useState({
     head_subtitle: '',
     head_title: '',
-    head_description: '',
     placeholder: '',
     widgets: [
       { name: '', value: '' },
@@ -584,9 +577,7 @@ export default function CmsPage() {
           </TabsTrigger>
         </TabsList>
 
-        {/* ========================================================= */}
         {/* TAB 1: HOMEPAGE CMS (/admin/webpages/homepage/) */}
-        {/* ========================================================= */}
         <TabsContent value="homepage" className="space-y-6">
           <Tabs defaultValue="home_head" className="space-y-4">
             <div className="border-b pb-2">
@@ -723,7 +714,6 @@ export default function CmsPage() {
                     </Label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div className="space-y-1">
-                        <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 1</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_1}
                           onChange={(url) => void patchAndSaveHomeHero({ image_1: url })}
@@ -732,7 +722,6 @@ export default function CmsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 2</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_2}
                           onChange={(url) => void patchAndSaveHomeHero({ image_2: url })}
@@ -741,7 +730,6 @@ export default function CmsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 3</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_3}
                           onChange={(url) => void patchAndSaveHomeHero({ image_3: url })}
@@ -750,7 +738,6 @@ export default function CmsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 4</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_4}
                           onChange={(url) => void patchAndSaveHomeHero({ image_4: url })}
@@ -1384,1124 +1371,63 @@ export default function CmsPage() {
           </Tabs>
         </TabsContent>
 
-        {/* ========================================================= */}
         {/* TAB 2: ABOUT US CMS (/admin/webpages/about_us) */}
-        {/* ========================================================= */}
         <TabsContent value="about" className="space-y-6">
-          <Tabs defaultValue="about_banner" className="space-y-4">
-            <div className="border-b pb-2">
-              <TabsList className="bg-background border p-1 h-auto flex flex-wrap gap-1">
-                <TabsTrigger value="about_banner" className="text-xs py-1 px-2.5">
-                  1. Header Banner
-                </TabsTrigger>
-                <TabsTrigger value="about_program" className="text-xs py-1 px-2.5">
-                  2. Program Info & Counters
-                </TabsTrigger>
-                <TabsTrigger value="about_video" className="text-xs py-1 px-2.5">
-                  3. Watch & Learn Video & Thumbnail
-                </TabsTrigger>
-                <TabsTrigger value="about_career" className="text-xs py-1 px-2.5">
-                  4. Career Steps
-                </TabsTrigger>
-                <TabsTrigger value="about_commitment" className="text-xs py-1 px-2.5">
-                  5. Commitment Cards
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            {/* Sub-tab 1: Header Banner (Order in page: 1) */}
-            <TabsContent value="about_banner" className="space-y-6">
-              <Card className="border shadow-xs">
-                <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-primary" />
-                      About Us Header Banner (Order in page: 1)
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Main page headline, introductory description, CTA button text, and background banner image
-                    </CardDescription>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleSaveSection('about_us', 'about_banner', aboutBanner, 'About Us Banner')}
-                    disabled={savingSection === 'about_banner'}
-                    className="h-8 text-xs gap-1.5"
-                  >
-                    {savingSection === 'about_banner' ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Save className="h-3.5 w-3.5" />
-                    )}
-                    Save Banner
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">
-                      Banner Title <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      value={aboutBanner.title}
-                      onChange={(e) =>
-                        setAboutBanner({ ...aboutBanner, title: e.target.value })
-                      }
-                      placeholder="Enter banner title (e.g. Who We Are & What We Do)..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-
-                  <RichTextEditor
-                    label="Banner Description (HTML / Rich Text)"
-                    value={aboutBanner.description}
-                    onChange={(val) => setAboutBanner({ ...aboutBanner, description: val })}
-                    height={165}
-                    placeholder="Enter banner description..."
-                    required
-                  />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-semibold">Button Text</Label>
-                      <Input
-                        value={aboutBanner.button_text}
-                        onChange={(e) =>
-                          setAboutBanner({ ...aboutBanner, button_text: e.target.value })
-                        }
-                        placeholder="Enter button text (e.g. Explore Our Services)..."
-                        className="h-9 text-xs"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <ImageUploadDropzone
-                        value={aboutBanner.image}
-                        onChange={(url) =>
-                          setAboutBanner({ ...aboutBanner, image: url })
-                        }
-                        onUploadFile={uploadImage}
-                        aspectRatio="banner"
-                        label="Upload Banner Image"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Sub-tab 2: Program Info & Counters (Order in page: 2) */}
-            <TabsContent value="about_program" className="space-y-6">
-              <Card className="border shadow-xs">
-                <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Info className="h-4 w-4 text-primary" />
-                      About Our Program (Order in page: 2)
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Institutional overview, dual illustration gallery, CTA, and 3 metric counters
-                    </CardDescription>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleSaveSection('about_us', 'about_program', aboutProgram, 'About Program')}
-                    disabled={savingSection === 'about_program'}
-                    className="h-8 text-xs gap-1.5"
-                  >
-                    {savingSection === 'about_program' ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Save className="h-3.5 w-3.5" />
-                    )}
-                    Save Program Info
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Title</Label>
-                    <Input
-                      value={aboutProgram.title}
-                      onChange={(e) =>
-                        setAboutProgram({ ...aboutProgram, title: e.target.value })
-                      }
-                      placeholder="Enter program title..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-
-                  <RichTextEditor
-                    label="Detail & Background (HTML / Rich Text)"
-                    value={aboutProgram.detail}
-                    onChange={(val) => setAboutProgram({ ...aboutProgram, detail: val })}
-                    height={165}
-                    placeholder="Enter program detail & background..."
-                    required
-                  />
-
-                  {/* Dual Image Gallery: Larger & Smaller */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border rounded-lg p-4 bg-muted/20">
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-semibold">Image Left (Larger)</Label>
-                      <ImageUploadDropzone
-                        value={aboutProgram.image_left}
-                        onChange={(url) =>
-                          setAboutProgram({ ...aboutProgram, image_left: url })
-                        }
-                        onUploadFile={uploadImage}
-                        aspectRatio="banner"
-                        label="Upload Program Image Left"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-semibold">Image Right (Smaller)</Label>
-                      <ImageUploadDropzone
-                        value={aboutProgram.image_right}
-                        onChange={(url) =>
-                          setAboutProgram({ ...aboutProgram, image_right: url })
-                        }
-                        onUploadFile={uploadImage}
-                        aspectRatio="banner"
-                        label="Upload Program Image Right"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Info Button Text</Label>
-                    <Input
-                      value={aboutProgram.button}
-                      onChange={(e) =>
-                        setAboutProgram({ ...aboutProgram, button: e.target.value })
-                      }
-                      placeholder="Enter button text..."
-                      className="h-9 text-xs max-w-sm"
-                    />
-                  </div>
-
-                  {/* 3 Counter Widgets */}
-                  <div className="border-t pt-4 space-y-3">
-                    <Label className="text-xs font-semibold block">
-                      Counter Widgets (3 Milestone Statistics)
-                    </Label>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {aboutProgram.counters.map((c, idx) => (
-                        <div key={c.order} className="border rounded-lg p-3 bg-card space-y-2">
-                          <span className="text-[11px] font-bold text-primary block">
-                            Counter #{idx + 1}
-                          </span>
-                          <div className="space-y-1">
-                            <Label className="text-[11px] text-muted-foreground font-medium">
-                              Counter Number / Stat
-                            </Label>
-                            <Input
-                              value={c.number}
-                              onChange={(e) => {
-                                const newCounters = [...aboutProgram.counters];
-                                newCounters[idx].number = e.target.value;
-                                setAboutProgram({ ...aboutProgram, counters: newCounters });
-                              }}
-                              className="h-8 text-xs font-semibold"
-                              placeholder="Enter number or stat..."
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <Label className="text-[11px] text-muted-foreground font-medium">
-                              Counter Label
-                            </Label>
-                            <Input
-                              value={c.label}
-                              onChange={(e) => {
-                                const newCounters = [...aboutProgram.counters];
-                                newCounters[idx].label = e.target.value;
-                                setAboutProgram({ ...aboutProgram, counters: newCounters });
-                              }}
-                              className="h-8 text-xs"
-                              placeholder="Enter counter label..."
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Sub-tab 3: Watch & Learn Video + Thumbnail (Order in page: 3) */}
-            <TabsContent value="about_video" className="space-y-6">
-              <Card className="border shadow-xs">
-                <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Video className="h-4 w-4 text-primary" />
-                      Watch & Learn: Video Showcase & Thumbnail (Order in page: 3)
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Upload platform demo video with responsive player and custom poster thumbnail
-                    </CardDescription>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleSaveSection('about_us', 'about_watch', aboutWatch, 'Watch & Learn Video')}
-                    disabled={savingSection === 'about_watch'}
-                    className="h-8 text-xs gap-1.5"
-                  >
-                    {savingSection === 'about_watch' ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Save className="h-3.5 w-3.5" />
-                    )}
-                    Save Video Section
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Video Section Title</Label>
-                    <Input
-                      value={aboutWatch.title}
-                      onChange={(e) =>
-                        setAboutWatch({ ...aboutWatch, title: e.target.value })
-                      }
-                      placeholder="Enter video section title..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-
-                  <RichTextEditor
-                    label="Video Section Detail / Description"
-                    value={aboutWatch.detail}
-                    onChange={(val) => setAboutWatch({ ...aboutWatch, detail: val })}
-                    height={160}
-                    placeholder="Enter video section description..."
-                    required
-                  />
-
-                  {/* Video & Poster Upload Responsive Grid */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 border rounded-xl p-4 bg-muted/20">
-                    <div className="space-y-2">
-                      <VideoUploadDropzone
-                        value={aboutWatch.video_url}
-                        onChange={(url) => setAboutWatch({ ...aboutWatch, video_url: url })}
-                        onUploadFile={async (file) => {
-                          const res = await cmsApi.uploadMedia(file);
-                          return res.url;
-                        }}
-                        label="Upload Video"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <ImageUploadDropzone
-                        value={aboutWatch.thumbnail}
-                        onChange={(url) => setAboutWatch({ ...aboutWatch, thumbnail: url })}
-                        aspectRatio="video"
-                        label="Upload Video Thumbnail"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Sub-tab 4: Career Steps (Order in page: 4) */}
-            <TabsContent value="about_career" className="space-y-6">
-              <Card className="border shadow-xs">
-                <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <GraduationCap className="h-4 w-4 text-primary" />
-                      Career Steps: "Career Changes Lives" (Order in page: 4)
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Section header and 3 sequential milestones for behavioral career advancement
-                    </CardDescription>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleSaveSection('about_us', 'about_career', aboutCareer, 'Career Steps')}
-                    disabled={savingSection === 'about_career'}
-                    className="h-8 text-xs gap-1.5"
-                  >
-                    {savingSection === 'about_career' ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Save className="h-3.5 w-3.5" />
-                    )}
-                    Save Career Steps
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Header */}
-                  <div className="border rounded-lg p-4 bg-muted/20 space-y-4">
-                    <span className="text-xs font-bold text-foreground uppercase tracking-wider block">
-                      Section Header (Order in section: 1)
-                    </span>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-semibold">Header Title</Label>
-                      <Input
-                        value={aboutCareer.head_title}
-                        onChange={(e) =>
-                          setAboutCareer({ ...aboutCareer, head_title: e.target.value })
-                        }
-                        placeholder="Enter header title..."
-                        className="h-9 text-xs"
-                      />
-                    </div>
-                    <RichTextEditor
-                      label="Header Description"
-                      value={aboutCareer.head_detail}
-                      onChange={(val) => setAboutCareer({ ...aboutCareer, head_detail: val })}
-                      height={150}
-                      placeholder="Enter header description..."
-                    />
-                  </div>
-
-                  {/* 3 Steps */}
-                  <div className="space-y-4">
-                    <Label className="text-xs font-semibold block">
-                      Career Steps Sequence (Order in section: 2, 3, 4)
-                    </Label>
-                    <div className="space-y-4">
-                      {aboutCareer.steps.map((st, idx) => (
-                        <div key={st.order} className="border rounded-lg p-4 bg-card space-y-3">
-                          <div className="flex items-center justify-between border-b pb-2">
-                            <span className="text-xs font-bold text-primary">
-                              Career Milestone #{idx + 1}
-                            </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">
-                              order_in_section: {st.order}
-                            </span>
-                          </div>
-                          <div className="space-y-1.5">
-                            <Label className="text-xs font-medium">Step Title</Label>
-                            <Input
-                              value={st.title}
-                              onChange={(e) => {
-                                const newSteps = [...aboutCareer.steps];
-                                newSteps[idx].title = e.target.value;
-                                setAboutCareer({ ...aboutCareer, steps: newSteps });
-                              }}
-                              placeholder="Enter step title..."
-                              className="h-8 text-xs font-medium"
-                            />
-                          </div>
-                          <RichTextEditor
-                            label="Step Description"
-                            value={st.detail}
-                            onChange={(val) => {
-                              const newSteps = [...aboutCareer.steps];
-                              newSteps[idx].detail = val;
-                              setAboutCareer({ ...aboutCareer, steps: newSteps });
-                            }}
-                            height={150}
-                            placeholder="Enter step description..."
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Sub-tab 5: Commitment Cards (Order in page: 5) */}
-            <TabsContent value="about_commitment" className="space-y-6">
-              <Card className="border shadow-xs">
-                <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <HeartHandshake className="h-4 w-4 text-primary" />
-                      Commitment Cards Section (Order in page: 5)
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Institutional core values, clinical ethics, and learner pledges
-                    </CardDescription>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleSaveSection('about_us', 'about_commitment', aboutCommitment, 'Commitment Cards')}
-                    disabled={savingSection === 'about_commitment'}
-                    className="h-8 text-xs gap-1.5"
-                  >
-                    {savingSection === 'about_commitment' ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Save className="h-3.5 w-3.5" />
-                    )}
-                    Save Commitments
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Header */}
-                  <div className="border rounded-lg p-4 bg-muted/20 space-y-4">
-                    <span className="text-xs font-bold text-foreground uppercase tracking-wider block">
-                      Commitment Header (Order in section: 1)
-                    </span>
-                    <RichTextEditor
-                      label="Header Title (HTML / Rich Text)"
-                      value={aboutCommitment.head_title}
-                      onChange={(val) =>
-                        setAboutCommitment({ ...aboutCommitment, head_title: val })
-                      }
-                      height={150}
-                      placeholder="Enter header title..."
-                    />
-                    <RichTextEditor
-                      label="Header Description (HTML / Rich Text)"
-                      value={aboutCommitment.head_detail}
-                      onChange={(val) =>
-                        setAboutCommitment({ ...aboutCommitment, head_detail: val })
-                      }
-                      height={150}
-                      placeholder="Enter header description..."
-                    />
-                  </div>
-
-                  {/* 3 Cards */}
-                  <div className="space-y-4">
-                    <Label className="text-xs font-semibold block">
-                      Commitment Cards (3 Strategic Pillars)
-                    </Label>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {aboutCommitment.cards.map((card, idx) => (
-                        <div key={card.order} className="border rounded-lg p-3.5 bg-card space-y-3">
-                          <span className="text-xs font-bold text-primary block">
-                            Pillar #{idx + 1}
-                          </span>
-                          <div className="space-y-1">
-                            <Label className="text-xs font-medium">Card Title</Label>
-                            <Input
-                              value={card.title}
-                              onChange={(e) => {
-                                const newCards = [...aboutCommitment.cards];
-                                newCards[idx].title = e.target.value;
-                                setAboutCommitment({ ...aboutCommitment, cards: newCards });
-                              }}
-                              placeholder="Enter card title..."
-                              className="h-8 text-xs font-medium"
-                            />
-                          </div>
-                          <RichTextEditor
-                            label="Card Detail"
-                            value={card.detail}
-                            onChange={(val) => {
-                              const newCards = [...aboutCommitment.cards];
-                              newCards[idx].detail = val;
-                              setAboutCommitment({ ...aboutCommitment, cards: newCards });
-                            }}
-                            height={150}
-                            placeholder="Enter card detail..."
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          <AboutUsCmsTab
+            aboutBanner={aboutBanner}
+            setAboutBanner={setAboutBanner}
+            aboutProgram={aboutProgram}
+            setAboutProgram={setAboutProgram}
+            aboutWatch={aboutWatch}
+            setAboutWatch={setAboutWatch}
+            aboutCareer={aboutCareer}
+            setAboutCareer={setAboutCareer}
+            aboutCommitment={aboutCommitment}
+            setAboutCommitment={setAboutCommitment}
+            savingSection={savingSection}
+            handleSaveSection={handleSaveSection}
+          />
         </TabsContent>
 
-        {/* ========================================================= */}
         {/* TAB 3: CONTACT US CMS (/admin/webpages/contact) */}
-        {/* ========================================================= */}
         <TabsContent value="contact" className="space-y-6">
-          {/* Contact Header Banner Card (Order in page: 1) */}
-          <Card className="border shadow-xs">
-            <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  Contact Us Header Banner (Order in page: 1)
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Header banner title, introductory description, and top background banner image
-                </CardDescription>
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleSaveSection('contact_us', 'contact_banner', contactBanner, 'Contact Banner')}
-                disabled={savingSection === 'contact_banner'}
-                className="gap-1.5 h-8 text-xs font-medium"
-              >
-                {savingSection === 'contact_banner' ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Save className="h-3.5 w-3.5" />
-                )}
-                Save Banner
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">
-                  Banner Title <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  value={contactBanner.title}
-                  onChange={(e) => setContactBanner({ ...contactBanner, title: e.target.value })}
-                  placeholder="Enter contact banner title..."
-                  className="h-9 text-xs"
-                />
-              </div>
-
-              <RichTextEditor
-                label="Banner Description (HTML / Rich Text)"
-                value={contactBanner.description}
-                onChange={(val) => setContactBanner({ ...contactBanner, description: val })}
-                height={150}
-                placeholder="Enter contact banner description..."
-              />
-
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Banner Image</Label>
-                <ImageUploadDropzone
-                  value={contactBanner.image}
-                  onChange={(url) => setContactBanner({ ...contactBanner, image: url })}
-                  onUploadFile={uploadImage}
-                  aspectRatio="banner"
-                  label="Upload Contact Header Banner"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Official Contact Coordinates & Channels Card (Order in page: 2) */}
-          <Card className="border shadow-xs">
-            <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <Phone className="h-5 w-5 text-primary" />
-                  Official Contact Coordinates & Social Channels (Order in page: 2)
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Public telephone, admissions email, physical address, and social channels
-                </CardDescription>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => handleSaveSection('contact_us', 'contact_details', contactCms, 'Contact Settings')}
-                disabled={savingSection === 'contact_details'}
-                className="gap-1.5 h-8 text-xs font-medium"
-              >
-                {savingSection === 'contact_details' ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Save className="h-3.5 w-3.5" />
-                )}
-                Save Contact Settings
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Section Titles */}
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Section Title</Label>
-                  <Input
-                    value={contactCms.title}
-                    onChange={(e) => setContactCms({ ...contactCms, title: e.target.value })}
-                    placeholder="Enter contact section title..."
-                    className="h-9 text-xs"
-                  />
-                </div>
-                <RichTextEditor
-                  label="Section Subtitle (HTML / Rich Text)"
-                  value={contactCms.subtitle}
-                  onChange={(val) => setContactCms({ ...contactCms, subtitle: val })}
-                  height={150}
-                  placeholder="Enter contact section subtitle..."
-                />
-              </div>
-
-              {/* Administrative Channels */}
-              <div className="border-t pt-4 space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Official Communication Channels
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Office Hotline Phone</Label>
-                    <Input
-                      value={contactCms.phone}
-                      onChange={(e) => setContactCms({ ...contactCms, phone: e.target.value })}
-                      placeholder="Enter hotline phone number..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Support / Admissions Email</Label>
-                    <Input
-                      type="email"
-                      value={contactCms.email}
-                      onChange={(e) => setContactCms({ ...contactCms, email: e.target.value })}
-                      placeholder="Enter support / admissions email..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Office / Advisory Hours</Label>
-                    <Input
-                      value={contactCms.business_hours}
-                      onChange={(e) =>
-                        setContactCms({ ...contactCms, business_hours: e.target.value })
-                      }
-                      placeholder="Enter business / office hours..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Physical Institute Address</Label>
-                  <Input
-                    value={contactCms.address}
-                    onChange={(e) => setContactCms({ ...contactCms, address: e.target.value })}
-                    placeholder="Enter institute physical address..."
-                    className="h-9 text-xs"
-                  />
-                </div>
-              </div>
-
-              {/* Contact Image */}
-              <div className="border-t pt-4 space-y-2">
-                <Label className="text-xs font-semibold">Contact Page Feature Graphic</Label>
-                <ImageUploadDropzone
-                  value={contactCms.image}
-                  onChange={(url) => setContactCms({ ...contactCms, image: url })}
-                  onUploadFile={uploadImage}
-                  aspectRatio="wide"
-                  label="Upload Contact Page Banner"
-                />
-              </div>
-
-              {/* Social Channels */}
-              <div className="border-t pt-4 space-y-4">
-                <div className="flex items-center gap-1.5">
-                  <Share2 className="h-3.5 w-3.5 text-muted-foreground" />
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Public Social Media Links
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">LinkedIn Profile URL</Label>
-                    <Input
-                      value={contactCms.social_linkedin}
-                      onChange={(e) =>
-                        setContactCms({ ...contactCms, social_linkedin: e.target.value })
-                      }
-                      placeholder="Enter LinkedIn profile URL..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Facebook Page URL</Label>
-                    <Input
-                      value={contactCms.social_facebook}
-                      onChange={(e) =>
-                        setContactCms({ ...contactCms, social_facebook: e.target.value })
-                      }
-                      placeholder="Enter Facebook page URL..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Twitter / X URL</Label>
-                    <Input
-                      value={contactCms.social_twitter}
-                      onChange={(e) =>
-                        setContactCms({ ...contactCms, social_twitter: e.target.value })
-                      }
-                      placeholder="Enter Twitter / X URL..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">YouTube Channel URL</Label>
-                    <Input
-                      value={contactCms.social_youtube}
-                      onChange={(e) =>
-                        setContactCms({ ...contactCms, social_youtube: e.target.value })
-                      }
-                      placeholder="Enter YouTube channel URL..."
-                      className="h-9 text-xs"
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ContactUsCmsTab
+            contactBanner={contactBanner}
+            setContactBanner={setContactBanner}
+            contactCms={contactCms}
+            setContactCms={setContactCms}
+            savingSection={savingSection}
+            handleSaveSection={handleSaveSection}
+          />
         </TabsContent>
 
-        {/* ========================================================= */}
         {/* TAB 4: COURSE PAGE CMS (/admin/webpages/course-page/index) */}
-        {/* ========================================================= */}
         <TabsContent value="course_page" className="space-y-6">
-          <Card className="border shadow-xs">
-            <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  Course Page CMS (Order in page: 1 & 2)
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Course catalog landing head text, curriculum search prompt, and key feature badges
-                </CardDescription>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => handleSaveSection('course_page', 'course_page_details', coursePageCms, 'Course Page Details')}
-                disabled={savingSection === 'course_page_details'}
-                className="gap-1.5 h-8 text-xs font-medium"
-              >
-                {savingSection === 'course_page_details' ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Save className="h-3.5 w-3.5" />
-                )}
-                Save Course Page
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <RichTextEditor
-                  label="Subtitle (Rich Text)"
-                  value={coursePageCms.head_subtitle}
-                  onChange={(val) => setCoursePageCms({ ...coursePageCms, head_subtitle: val })}
-                  height={150}
-                  placeholder="Enter course page subtitle..."
-                />
-
-                <RichTextEditor
-                  label="Main Title (Rich Text)"
-                  value={coursePageCms.head_title}
-                  onChange={(val) => setCoursePageCms({ ...coursePageCms, head_title: val })}
-                  height={150}
-                  placeholder="Enter course page main title..."
-                />
-
-                <RichTextEditor
-                  label="Curriculum Description"
-                  value={coursePageCms.head_description}
-                  onChange={(val) =>
-                    setCoursePageCms({ ...coursePageCms, head_description: val })
-                  }
-                  height={165}
-                  placeholder="Enter curriculum description..."
-                />
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1.5">
-                    <Search className="h-3.5 w-3.5 text-muted-foreground" />
-                    Search Input Placeholder
-                  </Label>
-                  <Input
-                    value={coursePageCms.placeholder}
-                    onChange={(e) =>
-                      setCoursePageCms({ ...coursePageCms, placeholder: e.target.value })
-                    }
-                    placeholder="Enter search input placeholder text..."
-                    className="h-9 text-xs"
-                  />
-                </div>
-              </div>
-
-              {/* 3 Course Page Feature Widgets (Order in page: 2) */}
-              <div className="border-t pt-4 space-y-4">
-                <Label className="text-xs font-semibold block">
-                  Course Page Widgets (Order in page: 2, 3 items)
-                </Label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {coursePageCms.widgets.map((w, idx) => (
-                    <div key={idx} className="border rounded-lg p-3 bg-muted/20 space-y-2">
-                      <span className="text-[11px] font-bold text-primary block">
-                        Widget #{idx + 1}
-                      </span>
-                      <div className="space-y-1">
-                        <Label className="text-[11px] font-medium text-muted-foreground">
-                          Widget Name
-                        </Label>
-                        <Input
-                          value={w.name}
-                          onChange={(e) => {
-                            const newWidgets = [...coursePageCms.widgets];
-                            newWidgets[idx].name = e.target.value;
-                            setCoursePageCms({ ...coursePageCms, widgets: newWidgets });
-                          }}
-                          placeholder="Enter widget name..."
-                          className="h-8 text-xs font-medium"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-[11px] font-medium text-muted-foreground">
-                          Widget Value / Display Text
-                        </Label>
-                        <Input
-                          value={w.value}
-                          onChange={(e) => {
-                            const newWidgets = [...coursePageCms.widgets];
-                            newWidgets[idx].value = e.target.value;
-                            setCoursePageCms({ ...coursePageCms, widgets: newWidgets });
-                          }}
-                          placeholder="Enter widget value..."
-                          className="h-8 text-xs"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <CoursePageCmsTab
+            coursePageCms={coursePageCms}
+            setCoursePageCms={setCoursePageCms}
+            savingSection={savingSection}
+            handleSaveSection={handleSaveSection}
+          />
         </TabsContent>
 
-        {/* ========================================================= */}
         {/* TAB 5: COMMON SECTIONS (FAQS & LEGAL POLICIES) */}
-        {/* ========================================================= */}
         <TabsContent value="common" className="space-y-6">
-          {/* FAQs Manager */}
-          <Card className="border shadow-xs">
-            <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <HelpCircle className="h-5 w-5 text-primary" />
-                  Frequently Asked Questions (FAQs) ({faqSection.items.length})
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Header title, description, illustrative graphic, and prospective student questions
-                </CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleSaveSection('common', 'faqs', faqSection, 'FAQs')}
-                  disabled={savingSection === 'faqs'}
-                  className="h-8 text-xs gap-1.5"
-                >
-                  {savingSection === 'faqs' ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Save className="h-3.5 w-3.5" />
-                  )}
-                  Save FAQs
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleAddFaq}
-                  className="gap-1.5 h-8 text-xs font-medium"
-                >
-                  <Plus className="h-3.5 w-3.5" /> Add FAQ
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Header Title & Description */}
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">
-                    FAQ Section Title <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    value={faqSection.title}
-                    onChange={(e) =>
-                      setFaqSection({ ...faqSection, title: e.target.value })
-                    }
-                    placeholder="Enter FAQ section title (e.g. Have questions about our RBT training?)..."
-                    className="h-9 text-xs"
-                  />
-                </div>
-
-                <RichTextEditor
-                  label="FAQ Section Description (HTML / Rich Text)"
-                  value={faqSection.description}
-                  onChange={(val) =>
-                    setFaqSection({ ...faqSection, description: val })
-                  }
-                  height={150}
-                  placeholder="Enter FAQ section description..."
-                />
-
-                <div className="space-y-1.5">
-                  <ImageUploadDropzone
-                    value={faqSection.image}
-                    onChange={(url) =>
-                      setFaqSection({ ...faqSection, image: url })
-                    }
-                    onUploadFile={uploadImage}
-                    aspectRatio="wide"
-                    label="Upload FAQ Section Graphic"
-                  />
-                </div>
-              </div>
-
-              {/* Questions & Answers List */}
-              <div className="border-t pt-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
-                      Questions & Answers ({faqSection.items.length})
-                    </Label>
-                    <span className="text-[11px] text-muted-foreground">
-                      Click the pencil icon on any item to edit question & answer inline
-                    </span>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleAddFaq}
-                    className="gap-1.5 h-7 text-xs font-medium"
-                  >
-                    <Plus className="h-3.5 w-3.5" /> Add Question
-                  </Button>
-                </div>
-
-                {faqSection.items.length === 0 ? (
-                  <div className="text-center py-8 text-xs text-muted-foreground border border-dashed rounded-lg">
-                    No questions added yet. Click &quot;Add FAQ&quot; above to create one.
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {faqSection.items.map((faq, index) => {
-                      const isEditing = editingFaqId === faq.id;
-                      return (
-                        <div
-                          key={faq.id}
-                          className="p-3.5 border rounded-xl bg-card hover:bg-muted/20 transition-colors space-y-3"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            {isEditing ? (
-                              <div className="flex-1 space-y-1">
-                                <Label className="text-[11px] text-muted-foreground font-semibold">
-                                  Question #{index + 1}
-                                </Label>
-                                <Input
-                                  value={faq.question}
-                                  onChange={(e) =>
-                                    handleUpdateFaq(faq.id, 'question', e.target.value)
-                                  }
-                                  placeholder="Enter question..."
-                                  className="h-8 text-xs font-semibold"
-                                  autoFocus
-                                />
-                              </div>
-                            ) : (
-                              <p className="text-xs font-bold text-foreground pt-1">
-                                {index + 1}. {faq.question || '(No question specified)'}
-                              </p>
-                            )}
-
-                            <div className="flex items-center gap-1 shrink-0 pt-0.5">
-                              <Button
-                                variant={isEditing ? 'default' : 'ghost'}
-                                size="icon"
-                                onClick={() => handleToggleEditFaq(faq.id)}
-                                className={`h-7 w-7 ${
-                                  isEditing
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'text-muted-foreground hover:text-foreground'
-                                }`}
-                                title={isEditing ? 'Save Question & Answer' : 'Edit Question & Answer'}
-                              >
-                                {isEditing ? (
-                                  <Check className="h-3 w-3" />
-                                ) : (
-                                  <Edit2 className="h-3 w-3" />
-                                )}
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleDeleteFaq(faq.id)}
-                                className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                                title="Delete FAQ"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
-                            </div>
-                          </div>
-
-                          {isEditing ? (
-                            <div className="space-y-1">
-                              <Label className="text-[11px] text-muted-foreground font-semibold">
-                                Answer (Plain text)
-                              </Label>
-                              <Textarea
-                                value={faq.answer}
-                                onChange={(e) =>
-                                  handleUpdateFaq(faq.id, 'answer', e.target.value)
-                                }
-                                placeholder="Enter plain text answer..."
-                                rows={3}
-                                className="text-xs resize-none"
-                              />
-                            </div>
-                          ) : (
-                            <p className="text-xs text-muted-foreground leading-relaxed pl-3 border-l-2 border-primary/40 whitespace-pre-wrap">
-                              {faq.answer || '(No answer provided)'}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Legal Policies & Compliance */}
-          <Card className="border shadow-xs">
-            <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  Legal, Privacy & BACB Compliance Disclaimers
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Legal terms, data protection statements, and independent curriculum accreditation notices
-                </CardDescription>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => handleSaveSection('common', 'legal', legalCms, 'Legal Policies')}
-                disabled={savingSection === 'legal'}
-                className="gap-1.5 h-8 text-xs font-medium"
-              >
-                {savingSection === 'legal' ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Save className="h-3.5 w-3.5" />
-                )}
-                Save Policies
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <RichTextEditor
-                label="Terms & Conditions"
-                value={legalCms.terms}
-                onChange={(val) => setLegalCms({ ...legalCms, terms: val })}
-                height={165}
-                placeholder="Enter terms & conditions..."
-              />
-
-              <RichTextEditor
-                label="Privacy Policy & Trainee Data Protection"
-                value={legalCms.privacy}
-                onChange={(val) => setLegalCms({ ...legalCms, privacy: val })}
-                height={165}
-                placeholder="Enter privacy policy..."
-              />
-            </CardContent>
-          </Card>
+          <CommonCmsTab
+            faqSection={faqSection}
+            setFaqSection={setFaqSection}
+            editingFaqId={editingFaqId}
+            legalCms={legalCms}
+            setLegalCms={setLegalCms}
+            savingSection={savingSection}
+            handleSaveSection={handleSaveSection}
+            handleToggleEditFaq={handleToggleEditFaq}
+            handleUpdateFaq={handleUpdateFaq}
+            handleAddFaq={handleAddFaq}
+            handleDeleteFaq={handleDeleteFaq}
+          />
         </TabsContent>
       </Tabs>
-
     </div>
   );
 }
