@@ -3,6 +3,7 @@ import { Upload, Trash2, RefreshCw, Image as ImageIcon, Loader2 } from 'lucide-r
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { cmsApi } from '@/services/cmsApi';
 import { resolveMediaUrl } from './video-upload-dropzone';
 
 interface ImageUploadDropzoneProps {
@@ -58,32 +59,24 @@ export function ImageUploadDropzone({
       return;
     }
 
-    if (onUploadFile) {
-      try {
-        setIsUploading(true);
-        const uploadedUrl = await onUploadFile(file);
-        onChange(uploadedUrl);
-        toast.success('Image uploaded successfully');
-        return;
-      } catch (err) {
-        console.warn('Backend upload failed, using local preview:', err);
-      } finally {
-        setIsUploading(false);
-      }
+    // Always upload to the API as a file URL — never persist multi‑MB base64 into CMS JSON.
+    try {
+      setIsUploading(true);
+      const upload =
+        onUploadFile ??
+        (async (f: File) => {
+          const res = await cmsApi.uploadMedia(f);
+          return res.url;
+        });
+      const uploadedUrl = await upload(file);
+      onChange(uploadedUrl);
+      toast.success('Image uploaded successfully');
+    } catch (err) {
+      console.error('Image upload failed:', err);
+      toast.error('Image upload failed. Please try again.');
+    } finally {
+      setIsUploading(false);
     }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (result) {
-        onChange(result);
-        toast.success('Image selected successfully');
-      }
-    };
-    reader.onerror = () => {
-      toast.error('Failed to read image file');
-    };
-    reader.readAsDataURL(file);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {

@@ -20,7 +20,8 @@ export const resolveMediaUrl = (url: string | undefined | null): string => {
     return url;
   }
   const apiBase =
-    (import.meta.env.VITE_API_URL as string | undefined) || 'http://localhost:5040/api/v1';
+    (import.meta.env.VITE_API_URL as string | undefined)?.trim() ||
+    (import.meta.env.DEV ? 'http://localhost:5040/api/v1' : 'https://2.25.242.196/api/v1');
   const backendBase = apiBase.replace(/\/api\/v1\/?$/, '');
   return `${backendBase}${url.startsWith('/') ? '' : '/'}${url}`;
 };
