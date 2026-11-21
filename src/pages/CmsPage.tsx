@@ -714,7 +714,6 @@ export default function CmsPage() {
                     </Label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div className="space-y-1">
-                        <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 1</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_1}
                           onChange={(url) => void patchAndSaveHomeHero({ image_1: url })}
@@ -723,7 +722,6 @@ export default function CmsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 2</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_2}
                           onChange={(url) => void patchAndSaveHomeHero({ image_2: url })}
@@ -732,7 +730,6 @@ export default function CmsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 3</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_3}
                           onChange={(url) => void patchAndSaveHomeHero({ image_3: url })}
@@ -741,7 +738,6 @@ export default function CmsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-[11px] text-muted-foreground font-medium">Hero Image 4</Label>
                         <ImageUploadDropzone
                           value={homeHero.image_4}
                           onChange={(url) => void patchAndSaveHomeHero({ image_4: url })}
